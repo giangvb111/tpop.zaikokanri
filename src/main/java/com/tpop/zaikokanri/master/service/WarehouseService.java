@@ -5,15 +5,16 @@ import com.tpop.zaikokanri.exceptions.CommonException;
 import com.tpop.zaikokanri.master.entities.Warehouse;
 
 import java.util.List;
-import java.util.Locale;
 
 public interface WarehouseService {
 
-    ApiResponse<Object> getWarehousePage(String warehouseCd , String warehouseName , Integer page , Integer limit) throws CommonException;
+    ApiResponse<Object> getWarehousePage(String warehouseCd , String warehouseName , Integer page , Integer limit ,String lang) throws CommonException;
 
-    ApiResponse<Object> getWarehouseById(Integer warehouseId, Locale locale);
+    ApiResponse<Object> getWarehouseById(Integer warehouseId, String lang);
 
     List<Warehouse> createWarehouse(List<Warehouse> warehouseList, String lang) throws CommonException;
 
     ApiResponse<Object> getWarehouseList();
+
+    Boolean getWarehouseByWarehouseCode(String warehouseCode);
 }

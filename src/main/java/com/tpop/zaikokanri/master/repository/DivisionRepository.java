@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface DivisionRepository extends JpaRepository<Division, Integer> {
@@ -18,7 +19,12 @@ public interface DivisionRepository extends JpaRepository<Division, Integer> {
     @Query(nativeQuery = true , value = DivisionQueryConstant.SEARCH_DIVISION_BY_DIVISION_ID)
     List<IDivisionDto> getDivisionByDivisionId (Integer divisionId) throws CommonException;
 
+    @Query(nativeQuery = true , value = DivisionQueryConstant.SEARCH_DIVISION_BY_DIVISION_ID_LIST)
+    List<IDivisionDto> getDivisionByDivisionIdList (List<Integer> divisionIdList) throws CommonException;
+
     @Query(nativeQuery = true , value = DivisionQueryConstant.SEARCH_DIVISION)
     Page<IDivisionDto> getDivisionPage (String divisionCd, String divisionName , Pageable pageable) throws CommonException;
+
+    Optional<Division> findDivisionByDivisionCd(String divisionCode);
 
 }

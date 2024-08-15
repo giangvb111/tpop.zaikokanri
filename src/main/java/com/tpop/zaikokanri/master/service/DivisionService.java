@@ -6,13 +6,14 @@ import com.tpop.zaikokanri.master.dto.DivisionDto;
 import com.tpop.zaikokanri.master.dto.IDivisionDto;
 
 import java.util.List;
-import java.util.Locale;
 
 public interface DivisionService {
 
-    ApiResponse<Object> getDivisionPage(String divisionCd , String divisionName , Integer page , Integer limit) throws CommonException;
+    ApiResponse<Object> getDivisionPage(String divisionCd , String divisionName , Integer page , Integer limit ,String lang) throws CommonException;
 
-    ApiResponse<Object> getDivisionById(Integer divisionId, Locale locale) throws CommonException;
+    ApiResponse<Object> getDivisionById(Integer divisionId, String lang) throws CommonException;
 
-    List<IDivisionDto> createDivision(List<DivisionDto> divisionList, Locale locale) throws CommonException;
+    List<IDivisionDto> createDivision(List<DivisionDto> divisionList, String lang) throws CommonException;
+
+    Boolean getDivisionByDivisionCode(String divisionCode);
 }

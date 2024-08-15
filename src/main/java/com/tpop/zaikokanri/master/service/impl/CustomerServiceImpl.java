@@ -3,7 +3,6 @@ package com.tpop.zaikokanri.master.service.impl;
 import com.tpop.zaikokanri.constants.MessageCode;
 import com.tpop.zaikokanri.exceptions.APIErrorDetail;
 import com.tpop.zaikokanri.exceptions.CommonException;
-import com.tpop.zaikokanri.master.entities.Category;
 import com.tpop.zaikokanri.master.entities.Customer;
 import com.tpop.zaikokanri.master.repository.CustomerRepository;
 import com.tpop.zaikokanri.master.service.GenericService;
@@ -49,9 +48,9 @@ public class CustomerServiceImpl implements GenericService<Customer> {
                         APIErrorDetail apiErrorDetail = new APIErrorDetail(
                                 i.intValue(),
                                 "" ,
-                                MessageCode.CHECK_EXISTS ,
+                                MessageCode.DATA_ALREADY_EXISTS,
                                 messageSource.getMessage(
-                                        MessageCode.CHECK_EXISTS , new Object[]{""}, locale
+                                        MessageCode.DATA_ALREADY_EXISTS, new Object[]{""}, locale
                                 )
                         );
                         errorDetails.add(apiErrorDetail);
@@ -60,7 +59,7 @@ public class CustomerServiceImpl implements GenericService<Customer> {
 
                 if (!CollectionUtils.isEmpty(errorDetails)) {
                     throw new CommonException()
-                            .setErrorCode(MessageCode.CHECK_EXISTS)
+                            .setErrorCode(MessageCode.DATA_ALREADY_EXISTS)
                             .setStatusCode(HttpStatus.BAD_REQUEST)
                             .setErrorDetails(errorDetails);
                 }

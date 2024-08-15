@@ -15,26 +15,27 @@ import java.util.Locale;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/division")
+@RequestMapping("/master/division")
 public class DivisionController {
 
     private final DivisionServiceImpl divisionService;
 
     @PostMapping(value = "/create")
-    public ResponseEntity<List<IDivisionDto>> createDivision(@RequestBody List<DivisionDto> divisionDtoList, Locale locale) throws CommonException {
-        return ResponseEntity.ok(divisionService.createDivision(divisionDtoList, locale));
+    public ResponseEntity<List<IDivisionDto>> createDivision(@RequestBody List<DivisionDto> divisionDtoList, @RequestParam(value = "lang") String lang) throws CommonException {
+        return ResponseEntity.ok(divisionService.createDivision(divisionDtoList, lang));
     }
 
     @GetMapping(value = "/get-division-by-id")
-    public ResponseEntity<ApiResponse<Object>> getDivisionById(@RequestParam(name = "id") Integer divisionId, Locale locale) throws CommonException {
-        return ResponseEntity.ok(divisionService.getDivisionById(divisionId, locale));
+    public ResponseEntity<ApiResponse<Object>> getDivisionById(@RequestParam(name = "id") Integer divisionId, @RequestParam(value = "lang") String lang) throws CommonException {
+        return ResponseEntity.ok(divisionService.getDivisionById(divisionId, lang));
     }
 
     @GetMapping(value = "/get-list")
     public ResponseEntity<ApiResponse<Object>> getDivisionPage(@RequestParam(value = "divisionCd") String divisionCd,
                                                             @RequestParam(value = "divisionName") String divisionName,
+                                                            @RequestParam(value = "lang") String lang,
                                                             @RequestParam(value = "page", defaultValue = "0") Integer page,
                                                             @RequestParam(value = "limit", defaultValue = "100") Integer limit) throws CommonException {
-        return ResponseEntity.ok(divisionService.getDivisionPage(divisionCd,divisionName, page, limit));
+        return ResponseEntity.ok(divisionService.getDivisionPage(divisionCd,divisionName, page, limit, lang));
     }
 }

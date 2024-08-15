@@ -1,6 +1,7 @@
 package com.tpop.zaikokanri.master.service.impl;
 
 import com.tpop.zaikokanri.components.ApiResponse;
+import com.tpop.zaikokanri.constants.FieldConstant;
 import com.tpop.zaikokanri.constants.MessageCode;
 import com.tpop.zaikokanri.constants.ResponseStatusConst;
 import com.tpop.zaikokanri.exceptions.APIErrorDetail;
@@ -8,8 +9,9 @@ import com.tpop.zaikokanri.exceptions.CommonException;
 import com.tpop.zaikokanri.master.dto.CategoryDto;
 import com.tpop.zaikokanri.master.dto.ICategoryDto;
 import com.tpop.zaikokanri.master.entities.Category;
+import com.tpop.zaikokanri.master.entities.Warehouse;
 import com.tpop.zaikokanri.master.repository.CategoryRepository;
-import com.tpop.zaikokanri.master.service.GenericService;
+import com.tpop.zaikokanri.master.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
@@ -25,43 +27,74 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 @RequiredArgsConstructor
-public class CategoryServiceImpl implements GenericService<Category> {
+public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
 
     private final MessageSource messageSource;
 
-    private final String fieldName  = "categoryCd";
-
-
     @Override
-    public Page<Category> findAll(Pageable pageable) throws CommonException {
-        return null;
+    public ApiResponse<Object> getCategoryPage(CategoryDto categoryDto, Integer page, Integer limit, String lang) throws CommonException {
+//        ApiResponse<Object> response = new ApiResponse<>();
+//        Pageable pageable = PageRequest.of(page, limit);
+//        Page<ICategoryDto> categoryPage = categoryRepository.getCategory(categoryDto, pageable);
+//        response.setStatus(ResponseStatusConst.SUCCESS);
+//        response.setMessage(null);
+//        response.setData(categoryPage);
+//        return response;
+        return  null;
     }
 
-    /**
-     *
-     * @param categoryList
-     * @param locale
-     * @return Category List
-     * @throws CommonException
-     */
     @Override
-    public List<Category> save(List<Category> categoryList, Locale locale) throws CommonException {
-        List<Category> createdCategory  = new ArrayList<>();
+    public ApiResponse<Object> getCategoryById(Integer categoryId, String lang) {
+//        ApiResponse<Object> result = new ApiResponse<>();
+//        if (!Objects.isNull(categoryId)) {
+//            Optional<Category> optionalCategory = findById(categoryId);
+//            if (optionalCategory.isEmpty()) {
+//                result.setMessage(messageSource.getMessage(
+//                        MessageCode.DATA_ALREADY_EXISTS, new Object[]{fieldName}, locale
+//                ));
+//            } else {
+//                result.setMessage(null);
+//            }
+//            result.setStatus(ResponseStatusConst.SUCCESS);
+//            result.setData(optionalCategory);
+//        }
+//        return result;
+        return  null;
+    }
+
+    @Override
+    public List<Category> createCategory(List<Category> categoryList, String lang) throws CommonException {
+        List<Category> createdCategory = new ArrayList<>();
         try {
-            LocalDateTime current  = LocalDateTime.now();
+            LocalDateTime current = LocalDateTime.now();
+            Locale locale = Locale.forLanguageTag(lang);
             if (!CollectionUtils.isEmpty(categoryList)) {
                 List<APIErrorDetail> errorDetails = new ArrayList<>();
                 AtomicInteger i = new AtomicInteger();
-                categoryList.forEach(c ->{
+                categoryList.forEach(c -> {
                     if (c.getCategoryCd().isBlank()) {
                         APIErrorDetail apiErrorDetail = new APIErrorDetail(
                                 i.intValue(),
-                                fieldName ,
-                                MessageCode.CHECK_EXISTS ,
+                                FieldConstant.CATEGORY_CD,
+                                MessageCode.NOT_BLANK,
                                 messageSource.getMessage(
-                                        MessageCode.CHECK_EXISTS , new Object[]{fieldName}, locale
+                                        MessageCode.NOT_BLANK, new Object[]{
+                                                messageSource.getMessage(FieldConstant.CATEGORY_CD, null, locale)
+                                        }, locale
+                                )
+                        );
+                        errorDetails.add(apiErrorDetail);
+                    }
+
+                    if (Boolean.TRUE.equals(getCategoryByCategoryCode(c.getCategoryCd()))) {
+                        APIErrorDetail apiErrorDetail = new APIErrorDetail(
+                                i.intValue(),
+                                FieldConstant.CATEGORY_CD,
+                                MessageCode.DATA_ALREADY_EXISTS,
+                                messageSource.getMessage(
+                                        MessageCode.DATA_ALREADY_EXISTS, new Object[]{c.getCategoryCd()}, locale
                                 )
                         );
                         errorDetails.add(apiErrorDetail);
@@ -70,13 +103,13 @@ public class CategoryServiceImpl implements GenericService<Category> {
 
                 if (!CollectionUtils.isEmpty(errorDetails)) {
                     throw new CommonException()
-                            .setErrorCode(MessageCode.CHECK_EXISTS)
+                            .setErrorCode(MessageCode.DATA_ALREADY_EXISTS)
                             .setStatusCode(HttpStatus.BAD_REQUEST)
                             .setErrorDetails(errorDetails);
                 }
 
                 List<Category> list = new ArrayList<>();
-                for (Category c: categoryList) {
+                for (Category c : categoryList) {
                     Category category = Category.builder()
                             .id(c.getId())
                             .categoryCd(c.getCategoryCd())
@@ -93,12 +126,12 @@ public class CategoryServiceImpl implements GenericService<Category> {
                 createdCategory = categoryRepository.saveAllAndFlush(list);
             }
 
-        }catch (CommonException e) {
+        } catch (CommonException e) {
             throw e;
         } catch (Exception e) {
             throw new CommonException(
-                    MessageCode.INTERNAL_ERROR ,
-                    e.getMessage() ,
+                    MessageCode.INTERNAL_ERROR,
+                    e.getMessage(),
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
@@ -106,47 +139,13 @@ public class CategoryServiceImpl implements GenericService<Category> {
         return createdCategory;
     }
 
-    @Override
-    public Optional<Category> findById(Integer id) {
-        return categoryRepository.findById(id);
-    }
-
-    @Override
-    public void deleteById(Integer id) {
-        // TODO document why this method is empty
-    }
-
-    public ApiResponse<Object> getCategoryById(Integer categoryId, Locale locale) {
-        ApiResponse<Object> result = new ApiResponse<>();
-        if (!Objects.isNull(categoryId)) {
-            Optional<Category> optionalCategory = findById(categoryId);
-            if (optionalCategory.isEmpty()) {
-                result.setMessage(messageSource.getMessage(
-                        MessageCode.CHECK_EXISTS, new Object[]{fieldName}, locale
-                ));
-            } else {
-                result.setMessage(null);
-            }
-            result.setStatus(ResponseStatusConst.SUCCESS);
-            result.setData(optionalCategory) ;
-        }
-        return result;
-    }
-
     /**
-     *
-     * @param categoryDto
-     * @param page
-     * @param limit
+     * @param categoryCode
      * @return
      */
-    public ApiResponse<Object> getCategory(CategoryDto categoryDto , Integer page , Integer limit) {
-        ApiResponse<Object> response = new ApiResponse<>();
-        Pageable pageable = PageRequest.of(page, limit);
-        Page<ICategoryDto> categoryPage = categoryRepository.getCategory(categoryDto ,pageable);
-        response.setStatus(ResponseStatusConst.SUCCESS);
-        response.setMessage(null);
-        response.setData(categoryPage);
-        return  response;
+    @Override
+    public Boolean getCategoryByCategoryCode(String categoryCode) {
+        Optional<Category> category = categoryRepository.findCategoryByCategoryCd(categoryCode);
+        return category.isPresent();
     }
 }
