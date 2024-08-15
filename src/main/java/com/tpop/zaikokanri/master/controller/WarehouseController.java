@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Locale;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,16 +23,17 @@ public class WarehouseController {
     }
 
     @GetMapping(value = "/get-warehouse-by-id")
-    public ResponseEntity<ApiResponse<Object>> getWarehouseById(@RequestParam(name = "id") Integer warehouseId, Locale locale) {
-        return ResponseEntity.ok(warehouseService.getWarehouseById(warehouseId, locale));
+    public ResponseEntity<ApiResponse<Object>> getWarehouseById(@RequestParam(name = "id") Integer warehouseId, @RequestParam(value = "lang") String lang) {
+        return ResponseEntity.ok(warehouseService.getWarehouseById(warehouseId, lang));
     }
 
     @GetMapping(value = "/get-list")
     public ResponseEntity<ApiResponse<Object>> getWarehouse(@RequestParam(value = "warehouseCd") String warehouseCd,
                                                             @RequestParam(value = "warehouseName") String warehouseName,
+                                                            @RequestParam(value = "lang") String lang,
                                                             @RequestParam(value = "page", defaultValue = "0") Integer page,
                                                             @RequestParam(value = "limit", defaultValue = "100") Integer limit) throws CommonException {
-        return ResponseEntity.ok(warehouseService.getWarehousePage(warehouseCd, warehouseName, page, limit));
+        return ResponseEntity.ok(warehouseService.getWarehousePage(warehouseCd, warehouseName, page, limit ,lang));
     }
 
     @GetMapping(value = "/get-all-list")

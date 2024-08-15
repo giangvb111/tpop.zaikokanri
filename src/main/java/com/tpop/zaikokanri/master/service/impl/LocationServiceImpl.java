@@ -1,12 +1,14 @@
 package com.tpop.zaikokanri.master.service.impl;
 
 import com.tpop.zaikokanri.components.ApiResponse;
+import com.tpop.zaikokanri.constants.FieldConstant;
 import com.tpop.zaikokanri.constants.MessageCode;
 import com.tpop.zaikokanri.constants.ResponseStatusConst;
 import com.tpop.zaikokanri.exceptions.APIErrorDetail;
 import com.tpop.zaikokanri.exceptions.CommonException;
 import com.tpop.zaikokanri.master.dto.ILocationDto;
 import com.tpop.zaikokanri.master.entities.Location;
+import com.tpop.zaikokanri.master.entities.Warehouse;
 import com.tpop.zaikokanri.master.repository.LocationRepository;
 import com.tpop.zaikokanri.master.service.LocationService;
 import lombok.RequiredArgsConstructor;
@@ -41,29 +43,39 @@ public class LocationServiceImpl implements LocationService {
      * @throws CommonException
      */
     @Override
-    public ApiResponse<Object> getLocationPage(String locationCd, String locationName, String warehouseName, Integer page, Integer limit) throws CommonException {
+    public ApiResponse<Object> getLocationPage(String locationCd, String locationName, String warehouseName, Integer page, Integer limit , String lang) throws CommonException {
         ApiResponse<Object> response = new ApiResponse<>();
+        Locale locale= Locale.forLanguageTag(lang);
         Pageable pageable = PageRequest.of(page, limit);
         Page<ILocationDto> locationPage = locationRepository.getLocationsPage(locationCd, locationName, warehouseName, pageable);
+        if (locationPage.getTotalElements() == 0) {
+            response.setMessage(
+                    messageSource.getMessage(
+                            MessageCode.DATA_NOT_FOUND, null, locale
+                    )
+            );
+        } else {
+            response.setMessage(null);
+        }
         response.setStatus(ResponseStatusConst.SUCCESS);
-        response.setMessage(null);
         response.setData(locationPage);
         return response;
     }
 
     /**
      * @param locationId
-     * @param locale
+     * @param lang
      * @return
      */
     @Override
-    public ApiResponse<Object> getLocationById(Integer locationId, Locale locale) {
+    public ApiResponse<Object> getLocationById(Integer locationId, String lang) {
         ApiResponse<Object> result = new ApiResponse<>();
         if (!Objects.isNull(locationId)) {
+            Locale locale = Locale.forLanguageTag(lang);
             ILocationDto optionalLocation = locationRepository.getLocationsByLocationId(locationId);
             if (optionalLocation == null) {
                 result.setMessage(messageSource.getMessage(
-                        MessageCode.CHECK_EXISTS, null, locale
+                        MessageCode.DATA_NOT_FOUND, null, locale
                 ));
             } else {
                 result.setMessage(null);
@@ -75,17 +87,29 @@ public class LocationServiceImpl implements LocationService {
     }
 
     /**
+     *
+     * @param locationCode
+     * @return
+     */
+    @Override
+    public Boolean getLocationByLocationCode(String locationCode) {
+        Optional<Location> location = locationRepository.findLocationByLocationCd(locationCode);
+        return location.isPresent();
+    }
+
+    /**
      * @param locationList
-     * @param locale
+     * @param lang
      * @return
      * @throws CommonException
      */
     @Override
     @Transactional(rollbackFor = {CommonException.class, Exception.class})
-    public List<Location> createLocation(List<Location> locationList, Locale locale) throws CommonException {
+    public List<Location> createLocation(List<Location> locationList, String lang) throws CommonException {
         List<Location> createdLocation = new ArrayList<>();
         try {
             LocalDateTime currentTime = LocalDateTime.now();
+            Locale locale = Locale.forLanguageTag(lang);
             if (!CollectionUtils.isEmpty(locationList)) {
                 List<APIErrorDetail> errorDetails = new ArrayList<>();
                 AtomicInteger i = new AtomicInteger();
@@ -93,10 +117,12 @@ public class LocationServiceImpl implements LocationService {
                     if (l.getLocationCd().isBlank()) {
                         APIErrorDetail apiErrorDetail = new APIErrorDetail(
                                 i.intValue(),
-                                "locationCd",
-                                MessageCode.CHECK_EXISTS,
+                                FieldConstant.LOCATION_CD,
+                                MessageCode.NOT_BLANK,
                                 messageSource.getMessage(
-                                        MessageCode.CHECK_EXISTS, new Object[]{"locationCd"}, locale
+                                        MessageCode.NOT_BLANK, new Object[]{
+                                                messageSource.getMessage(FieldConstant.LOCATION_CD ,null , locale)
+                                        }, locale
                                 )
                         );
                         errorDetails.add(apiErrorDetail);
@@ -105,10 +131,12 @@ public class LocationServiceImpl implements LocationService {
                     if (l.getLocationName().isBlank()) {
                         APIErrorDetail apiErrorDetail = new APIErrorDetail(
                                 i.intValue(),
-                                "locationName",
-                                MessageCode.CHECK_EXISTS,
+                                FieldConstant.LOCATION_NAME,
+                                MessageCode.NOT_BLANK,
                                 messageSource.getMessage(
-                                        MessageCode.CHECK_EXISTS, new Object[]{"locationName"}, locale
+                                        MessageCode.NOT_BLANK, new Object[]{
+                                                messageSource.getMessage(FieldConstant.LOCATION_NAME ,null , locale)
+                                        }, locale
                                 )
                         );
                         errorDetails.add(apiErrorDetail);
@@ -116,10 +144,24 @@ public class LocationServiceImpl implements LocationService {
                     if (Objects.isNull(l.getWarehouseId())) {
                         APIErrorDetail apiErrorDetail = new APIErrorDetail(
                                 i.intValue(),
-                                "warehouseId",
-                                MessageCode.CHECK_EXISTS,
+                                FieldConstant.WAREHOUSE_ID,
+                                MessageCode.NOT_BLANK,
                                 messageSource.getMessage(
-                                        MessageCode.CHECK_EXISTS, new Object[]{"warehouseId"}, locale
+                                        MessageCode.NOT_BLANK, new Object[]{
+                                                messageSource.getMessage(FieldConstant.WAREHOUSE_ID ,null , locale)
+                                        }, locale
+                                )
+                        );
+                        errorDetails.add(apiErrorDetail);
+                    }
+
+                    if (Boolean.TRUE.equals(getLocationByLocationCode(l.getLocationCd()))) {
+                        APIErrorDetail apiErrorDetail = new APIErrorDetail(
+                                i.intValue(),
+                                FieldConstant.LOCATION_NAME,
+                                MessageCode.DATA_ALREADY_EXISTS ,
+                                messageSource.getMessage(
+                                        MessageCode.DATA_ALREADY_EXISTS , new Object[]{l.getLocationCd()}, locale
                                 )
                         );
                         errorDetails.add(apiErrorDetail);
@@ -128,7 +170,7 @@ public class LocationServiceImpl implements LocationService {
 
                 if (!CollectionUtils.isEmpty(errorDetails)) {
                     throw new CommonException()
-                            .setErrorCode(MessageCode.CHECK_EXISTS)
+                            .setErrorCode(MessageCode.BAD_REQUEST)
                             .setStatusCode(HttpStatus.BAD_REQUEST)
                             .setErrorDetails(errorDetails);
                 }

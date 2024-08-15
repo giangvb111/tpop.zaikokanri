@@ -13,16 +13,13 @@ import java.util.List;
 @Builder
 public class DivisionDto {
 
-    @MapFieldToColumn(value = "divisionId")
-    @JsonProperty(value = "DIVISION_ID")
+    @JsonProperty(value = "id")
     private Integer id;
 
-    @MapFieldToColumn(value = "divisionCd")
-    @JsonProperty(value = "DIVISION_CD")
+    @JsonProperty(value = "divisionCd")
     private String divisionCd;
 
-    @MapFieldToColumn(value = "divisionName")
-    @JsonProperty(value = "DIVISION_NAME")
+    @JsonProperty(value = "divisionName")
     private String divisionName;
 
     private List<Integer> warehouseIdList;

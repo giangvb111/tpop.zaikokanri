@@ -33,6 +33,17 @@ public class WarehouseServiceImpl implements WarehouseService {
 
     /**
      *
+     * @param warehouseCode
+     * @return
+     */
+    @Override
+    public Boolean getWarehouseByWarehouseCode(String warehouseCode) {
+        Optional<Warehouse> warehouse = warehouseRepository.findWarehouseByWarehouseCd(warehouseCode);
+        return warehouse.isPresent();
+    }
+
+    /**
+     *
      * @param warehouseList
      * @param lang
      * @return
@@ -55,7 +66,9 @@ public class WarehouseServiceImpl implements WarehouseService {
                                 FieldConstant.WAREHOUSE_CODE,
                                 MessageCode.NOT_BLANK ,
                                 messageSource.getMessage(
-                                        MessageCode.NOT_BLANK , new Object[]{FieldConstant.WAREHOUSE_CODE}, locale
+                                        MessageCode.NOT_BLANK , new Object[]{
+                                                messageSource.getMessage(FieldConstant.WAREHOUSE_CODE , null , locale)
+                                        }, locale
                                 )
                         );
                         errorDetails.add(apiErrorDetail);
@@ -65,9 +78,23 @@ public class WarehouseServiceImpl implements WarehouseService {
                         APIErrorDetail apiErrorDetail = new APIErrorDetail(
                                 i.intValue(),
                                 FieldConstant.WAREHOUSE_NAME,
-                                MessageCode.CHECK_EXISTS ,
+                                MessageCode.DATA_ALREADY_EXISTS,
                                 messageSource.getMessage(
-                                        MessageCode.NOT_BLANK , new Object[]{FieldConstant.WAREHOUSE_NAME}, locale
+                                        MessageCode.NOT_BLANK , new Object[]{
+                                                messageSource.getMessage(FieldConstant.WAREHOUSE_NAME , null , locale)
+                                        }, locale
+                                )
+                        );
+                        errorDetails.add(apiErrorDetail);
+                    }
+
+                    if (Boolean.TRUE.equals(getWarehouseByWarehouseCode(w.getWarehouseCd()))) {
+                        APIErrorDetail apiErrorDetail = new APIErrorDetail(
+                                i.intValue(),
+                                FieldConstant.WAREHOUSE_NAME,
+                                MessageCode.DATA_ALREADY_EXISTS ,
+                                messageSource.getMessage(
+                                        MessageCode.DATA_ALREADY_EXISTS , new Object[]{w.getWarehouseCd()}, locale
                                 )
                         );
                         errorDetails.add(apiErrorDetail);
@@ -76,7 +103,7 @@ public class WarehouseServiceImpl implements WarehouseService {
 
                 if (!CollectionUtils.isEmpty(errorDetails)) {
                     throw new CommonException()
-                            .setErrorCode(MessageCode.CHECK_EXISTS)
+                            .setErrorCode(MessageCode.BAD_REQUEST)
                             .setStatusCode(HttpStatus.BAD_REQUEST)
                             .setErrorDetails(errorDetails);
                 }
@@ -125,20 +152,22 @@ public class WarehouseServiceImpl implements WarehouseService {
         return response;
     }
 
+
     /**
      *
      * @param warehouseId
-     * @param locale
+     * @param lang
      * @return
      */
     @Override
-    public ApiResponse<Object> getWarehouseById(Integer warehouseId, Locale locale) {
+    public ApiResponse<Object> getWarehouseById(Integer warehouseId, String lang) {
         ApiResponse<Object> result = new ApiResponse<>();
         if (!Objects.isNull(warehouseId)) {
+            Locale locale = Locale.forLanguageTag(lang);
             Optional<Warehouse> optionalWarehouse = warehouseRepository.findById(warehouseId);
             if (optionalWarehouse.isEmpty()) {
                 result.setMessage(messageSource.getMessage(
-                        MessageCode.CHECK_EXISTS, null, locale
+                        MessageCode.DATA_NOT_FOUND, null, locale
                 ));
             } else {
                 result.setMessage(null);
@@ -159,12 +188,21 @@ public class WarehouseServiceImpl implements WarehouseService {
      * @throws CommonException
      */
     @Override
-    public ApiResponse<Object> getWarehousePage(String warehouseCd,String warehouseName, Integer page, Integer limit) throws CommonException {
+    public ApiResponse<Object> getWarehousePage(String warehouseCd,String warehouseName, Integer page, Integer limit , String lang) throws CommonException {
         ApiResponse<Object> response = new ApiResponse<>();
+        Locale locale = Locale.forLanguageTag(lang);
         Pageable pageable = PageRequest.of(page, limit);
         Page<Warehouse> warehousePage = warehouseRepository.findByWarehouseCdContainingAndWarehouseNameContaining(warehouseCd , warehouseName ,pageable);
+        if (warehousePage.getTotalElements() == 0) {
+            response.setMessage(
+                    messageSource.getMessage(
+                            MessageCode.DATA_NOT_FOUND, null, locale
+                    )
+            );
+        } else {
+            response.setMessage(null);
+        }
         response.setStatus(ResponseStatusConst.SUCCESS);
-        response.setMessage(null);
         response.setData(warehousePage);
         return  response;
     }
