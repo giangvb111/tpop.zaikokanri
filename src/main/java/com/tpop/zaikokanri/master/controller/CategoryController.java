@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Locale;
 
 @RestController
 @RequiredArgsConstructor
@@ -33,7 +32,7 @@ public class CategoryController {
     public ResponseEntity<ApiResponse<Object>> getCategory(@ModelAttribute (name = "params") CategoryDto categoryDto ,
                                                            @RequestParam(value = "lang") String lang,
                                                            @RequestParam (value = "page", defaultValue = "0") Integer page,
-                                                           @RequestParam (value = "limit", defaultValue = "100")  Integer limit) {
+                                                           @RequestParam (value = "limit", defaultValue = "100")  Integer limit) throws CommonException {
         return ResponseEntity.ok(categoryService.getCategoryPage( categoryDto ,page ,limit ,lang));
     }
 
