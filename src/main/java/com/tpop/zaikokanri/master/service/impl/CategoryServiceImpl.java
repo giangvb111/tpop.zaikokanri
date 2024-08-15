@@ -9,7 +9,6 @@ import com.tpop.zaikokanri.exceptions.CommonException;
 import com.tpop.zaikokanri.master.dto.CategoryDto;
 import com.tpop.zaikokanri.master.dto.ICategoryDto;
 import com.tpop.zaikokanri.master.entities.Category;
-import com.tpop.zaikokanri.master.entities.Warehouse;
 import com.tpop.zaikokanri.master.repository.CategoryRepository;
 import com.tpop.zaikokanri.master.service.CategoryService;
 import lombok.RequiredArgsConstructor;
@@ -33,37 +32,67 @@ public class CategoryServiceImpl implements CategoryService {
 
     private final MessageSource messageSource;
 
+    /**
+     *
+     * @param categoryDto
+     * @param page
+     * @param limit
+     * @param lang
+     * @return
+     * @throws CommonException
+     */
     @Override
     public ApiResponse<Object> getCategoryPage(CategoryDto categoryDto, Integer page, Integer limit, String lang) throws CommonException {
-//        ApiResponse<Object> response = new ApiResponse<>();
-//        Pageable pageable = PageRequest.of(page, limit);
-//        Page<ICategoryDto> categoryPage = categoryRepository.getCategory(categoryDto, pageable);
-//        response.setStatus(ResponseStatusConst.SUCCESS);
-//        response.setMessage(null);
-//        response.setData(categoryPage);
-//        return response;
-        return  null;
+        ApiResponse<Object> response = new ApiResponse<>();
+        Locale locale = Locale.forLanguageTag(lang);
+        Pageable pageable = PageRequest.of(page, limit);
+        Page<ICategoryDto> categoryPage = categoryRepository.getCategory(categoryDto, pageable);
+        if (categoryPage.getTotalElements() == 0) {
+            response.setMessage(
+                    messageSource.getMessage(
+                            MessageCode.DATA_NOT_FOUND, null, locale
+                    )
+            );
+        } else {
+            response.setMessage(null);
+        }
+        response.setStatus(ResponseStatusConst.SUCCESS);
+        response.setData(categoryPage);
+        return response;
     }
 
+    /**
+     *
+     * @param categoryId
+     * @param lang
+     * @return
+     */
     @Override
     public ApiResponse<Object> getCategoryById(Integer categoryId, String lang) {
-//        ApiResponse<Object> result = new ApiResponse<>();
-//        if (!Objects.isNull(categoryId)) {
-//            Optional<Category> optionalCategory = findById(categoryId);
-//            if (optionalCategory.isEmpty()) {
-//                result.setMessage(messageSource.getMessage(
-//                        MessageCode.DATA_ALREADY_EXISTS, new Object[]{fieldName}, locale
-//                ));
-//            } else {
-//                result.setMessage(null);
-//            }
-//            result.setStatus(ResponseStatusConst.SUCCESS);
-//            result.setData(optionalCategory);
-//        }
-//        return result;
-        return  null;
+        ApiResponse<Object> result = new ApiResponse<>();
+        if (!Objects.isNull(categoryId)) {
+            Locale locale = Locale.forLanguageTag(lang);
+            Optional<Category> optionalCategory = categoryRepository.findById(categoryId);
+            if (optionalCategory.isEmpty()) {
+                result.setMessage(messageSource.getMessage(
+                        MessageCode.DATA_NOT_FOUND, null, locale
+                ));
+            } else {
+                result.setMessage(null);
+            }
+            result.setStatus(ResponseStatusConst.SUCCESS);
+            result.setData(optionalCategory);
+        }
+        return result;
     }
 
+    /**
+     *
+     * @param categoryList
+     * @param lang
+     * @return
+     * @throws CommonException
+     */
     @Override
     public List<Category> createCategory(List<Category> categoryList, String lang) throws CommonException {
         List<Category> createdCategory = new ArrayList<>();

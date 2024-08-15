@@ -10,4 +10,5 @@ public class FieldConstant {
     public static final String DIVISION_NAME = "DIVISION_NAME";
     public static final String DIVISION_CD = "DIVISION_CD";
     public static final String CATEGORY_CD = "CATEGORY_CD";
+    public static final String CUSTOMER_CD = "CUSTOMER_CD";
 }

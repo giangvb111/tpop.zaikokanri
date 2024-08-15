@@ -12,8 +12,9 @@ public class CategoryQueryConstant {
                     "    FROM \n" +
                     "        M_カテゴリ c\n" +
                     "    WHERE \n" +
-                    "        (:#{#categoryDto.categoryCd} IS NULL OR c.CATEGORY_CD = :#{#categoryDto.categoryCd})\n" +
-                    "        AND (:#{#categoryDto.majorCategory} IS NULL OR c.MAJOR_CATEGORY = :#{#categoryDto.majorCategory})\n" +
-                    "        AND (:#{#categoryDto.mediumCategory} IS NULL OR c.MEDIUM_CATEGORY = :#{#categoryDto.mediumCategory})\n" +
-                    "        AND (:#{#categoryDto.subCategory} IS NULL OR c.SUB_CATEGORY = :#{#categoryDto.subCategory})";
+                    "        (:#{#categoryDto.categoryCd} IS NULL OR c.CATEGORY_CD LIKE CONCAT('%', :#{#categoryDto.categoryCd}, '%'))\n" +
+                    "        AND (:#{#categoryDto.majorCategory} IS NULL OR c.MAJOR_CATEGORY LIKE CONCAT('%', :#{#categoryDto.majorCategory}, '%'))\n" +
+                    "        AND (:#{#categoryDto.mediumCategory} IS NULL OR c.MEDIUM_CATEGORY LIKE CONCAT('%', :#{#categoryDto.mediumCategory}, '%'))\n" +
+                    "        AND (:#{#categoryDto.subCategory} IS NULL OR c.SUB_CATEGORY LIKE CONCAT('%', :#{#categoryDto.subCategory}, '%'))";
+
 }
