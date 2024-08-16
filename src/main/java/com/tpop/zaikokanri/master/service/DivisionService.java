@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface DivisionService {
 
-    ApiResponse<Object> getDivisionPage(String divisionCd , String divisionName , Integer page , Integer limit ,String lang) throws CommonException;
+    ApiResponse<Object> getDivisionPage(String divisionCd, String divisionName, String warehouseCd, Integer page, Integer limit, String lang) throws CommonException;
 
     ApiResponse<Object> getDivisionById(Integer divisionId, String lang) throws CommonException;
 

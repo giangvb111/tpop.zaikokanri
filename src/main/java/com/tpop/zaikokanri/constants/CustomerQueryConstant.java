@@ -3,9 +3,30 @@ package com.tpop.zaikokanri.constants;
 public class CustomerQueryConstant {
 
     public static final String SEARCH_CUSTOMER =
-            "SELECT * \n" +
-                    "FROM M_取引先 as c\n" +
-                    "WHERE (:#{#customerDto.customerCd} IS NULL OR c.CUSTOMER_CD LIKE CONCAT('%', :#{#customerDto.customerCd}, '%'))\n" +
+            "SELECT \n" +
+                    "    c.CUSTOMER_ID AS customerId,\n" +
+                    "    c.CUSTOMER_CD AS customerCd,\n" +
+                    "    c.CUSTOMER_NAME AS customerName,\n" +
+                    "    c.[CUSTOMER_NAME(FORMAL)] AS customerNameFormal,\n" +
+                    "    c.SUPPLIER_FLAG AS supplierFlag,\n" +
+                    "    c.DELIVERY_FLAG AS deliveryFlag,\n" +
+                    "    c.REQUEST_FLAG AS requestFlag,\n" +
+                    "    c.COMPANY_FLAG AS companyFlag,\n" +
+                    "    c.COUNTRY AS country,\n" +
+                    "    c.POSTAL_CODE AS postalCode,\n" +
+                    "    c.PREFECTURES AS prefectures,\n" +
+                    "    c.MUNICIPALITIES AS municipalities,\n" +
+                    "    c.ADDRESS AS address,\n" +
+                    "    c.BUILDING AS building,\n" +
+                    "    c.TEL AS tel,\n" +
+                    "    c.FAX AS fax,\n" +
+                    "    c.DEPARTMENT_NAME AS departmentName,\n" +
+                    "    c.PIC_NAME AS picName,\n" +
+                    "    c.MAIL_ADDRESS AS mailAddress,\n" +
+                    "    c.HOME_PAGE AS homePage\n" +
+                    "FROM M_取引先 AS c\n" +
+                    "WHERE \n" +
+                    "    (:#{#customerDto.customerCd} IS NULL OR c.CUSTOMER_CD LIKE CONCAT('%', :#{#customerDto.customerCd}, '%'))\n" +
                     "AND (:#{#customerDto.customerName} IS NULL OR c.CUSTOMER_NAME LIKE CONCAT('%', :#{#customerDto.customerName}, '%'))\n" +
                     "AND (:#{#customerDto.customerNameFormal} IS NULL OR c.[CUSTOMER_NAME(FORMAL)] LIKE CONCAT('%', :#{#customerDto.customerNameFormal}, '%'))\n" +
                     "AND (:#{#customerDto.supplierFlag} IS NULL OR c.SUPPLIER_FLAG LIKE CONCAT('%', :#{#customerDto.supplierFlag}, '%'))\n" +
@@ -23,5 +44,5 @@ public class CustomerQueryConstant {
                     "AND (:#{#customerDto.departmentName} IS NULL OR c.DEPARTMENT_NAME LIKE CONCAT('%', :#{#customerDto.departmentName}, '%'))\n" +
                     "AND (:#{#customerDto.picName} IS NULL OR c.PIC_NAME LIKE CONCAT('%', :#{#customerDto.picName}, '%'))\n" +
                     "AND (:#{#customerDto.mailAddress} IS NULL OR c.MAIL_ADDRESS LIKE CONCAT('%', :#{#customerDto.mailAddress}, '%'))\n" +
-                    "AND (:#{#customerDto.homePage} IS NULL OR c.HOME_PAGE LIKE CONCAT('%', :#{#customerDto.homePage}, '%'))";
+                    "AND (:#{#customerDto.homePage} IS NULL OR c.HOME_PAGE LIKE CONCAT('%', :#{#customerDto.homePage}, '%'));\n";
 }

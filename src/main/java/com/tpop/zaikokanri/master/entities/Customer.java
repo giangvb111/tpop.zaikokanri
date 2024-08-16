@@ -24,7 +24,7 @@ public class Customer extends BaseEntity{
     @Column(name = "CUSTOMER_NAME")
     private String customerName;
 
-    @Column(name = "\"CUSTOMER_NAME(FORMAL)\"")
+    @Column(name = "CUSTOMER_NAME(FORMAL)")
     private String customerNameFormal;
 
     @Column(name = "SUPPLIER_FLAG")

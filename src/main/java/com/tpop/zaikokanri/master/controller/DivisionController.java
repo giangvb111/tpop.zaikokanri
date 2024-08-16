@@ -33,9 +33,10 @@ public class DivisionController {
     @GetMapping(value = "/get-list")
     public ResponseEntity<ApiResponse<Object>> getDivisionPage(@RequestParam(value = "divisionCd") String divisionCd,
                                                             @RequestParam(value = "divisionName") String divisionName,
+                                                            @RequestParam(value = "warehouseCd") String warehouseCd,
                                                             @RequestParam(value = "lang") String lang,
                                                             @RequestParam(value = "page", defaultValue = "0") Integer page,
                                                             @RequestParam(value = "limit", defaultValue = "100") Integer limit) throws CommonException {
-        return ResponseEntity.ok(divisionService.getDivisionPage(divisionCd,divisionName, page, limit, lang));
+        return ResponseEntity.ok(divisionService.getDivisionPage(divisionCd,divisionName,warehouseCd, page, limit, lang));
     }
 }

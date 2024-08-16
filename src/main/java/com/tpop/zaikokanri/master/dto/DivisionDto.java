@@ -22,5 +22,6 @@ public class DivisionDto {
     @JsonProperty(value = "divisionName")
     private String divisionName;
 
-    private List<Integer> warehouseIdList;
+    @JsonProperty(value = "warehouseId")
+    private Integer warehouseId;
 }

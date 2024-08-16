@@ -49,11 +49,11 @@ public class DivisionServiceImpl implements DivisionService {
      * @throws CommonException
      */
     @Override
-    public ApiResponse<Object> getDivisionPage(String divisionCd, String divisionName, Integer page, Integer limit, String lang) throws CommonException {
+    public ApiResponse<Object> getDivisionPage(String divisionCd, String divisionName,String warehouseCd, Integer page, Integer limit, String lang) throws CommonException {
         ApiResponse<Object> response = new ApiResponse<>();
         Pageable pageable = PageRequest.of(page, limit);
         Locale locale = Locale.forLanguageTag(lang);
-        Page<IDivisionDto> divisionPage = divisionRepository.getDivisionPage(divisionCd, divisionName, pageable);
+        Page<IDivisionDto> divisionPage = divisionRepository.getDivisionPage(divisionCd, divisionName,warehouseCd, pageable);
         if (divisionPage.getTotalElements() == 0) {
             response.setMessage(
                     messageSource.getMessage(
@@ -190,20 +190,16 @@ public class DivisionServiceImpl implements DivisionService {
 
                 List<WarehouseDivision> warehouseDivisionList = new ArrayList<>();
                 for (int j = 0; j < divisionDtoList.size(); j++) {
-                    DivisionDto divisionDto = divisionDtoList.get(j);
                     Integer divisionId = createdDiv.get(j).getId();
-                    for (Integer warehouseId : divisionDto.getWarehouseIdList()) {
                         WarehouseDivision warehouseDivision = WarehouseDivision.builder()
-//                                    .diviWarehouseId(wd.)
                                 .divisionId(divisionId)
-                                .warehouseId(warehouseId)
+                                .warehouseId(divisionDtoList.get(j).getWarehouseId())
                                 .createdAt(currentTime)
                                 .createdBy("user")
                                 .updatedAt(currentTime)
                                 .updatedBy("user")
                                 .build();
                         warehouseDivisionList.add(warehouseDivision);
-                    }
                 }
                 warehouseDivisionRepository.saveAllAndFlush(warehouseDivisionList);
             }
