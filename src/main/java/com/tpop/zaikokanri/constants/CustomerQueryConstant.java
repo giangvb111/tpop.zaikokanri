@@ -24,6 +24,4 @@ public class CustomerQueryConstant {
                     "AND (:#{#customerDto.picName} IS NULL OR c.PIC_NAME LIKE CONCAT('%', :#{#customerDto.picName}, '%'))\n" +
                     "AND (:#{#customerDto.mailAddress} IS NULL OR c.MAIL_ADDRESS LIKE CONCAT('%', :#{#customerDto.mailAddress}, '%'))\n" +
                     "AND (:#{#customerDto.homePage} IS NULL OR c.HOME_PAGE LIKE CONCAT('%', :#{#customerDto.homePage}, '%'))";
-
-
 }
