@@ -30,8 +30,9 @@ public class DivisionQueryConstant {
     public static final String SEARCH_DIVISION =
             "select d.DIVISION_ID , d.DIVISION_CD , d.DIVISION_NAME ,w.WAREHOUSE_CD , w.WAREHOUSE_NAME  \n" +
                     "from M_部門 as d\n" +
-                    "left join M_部門_倉庫 as dw on d.DIVISION_ID = dw.DIVISION_ID\n" +
-                    "left join M_倉庫 w on dw.WAREHOUSE_ID = dw.WAREHOUSE_ID\n" +
-                    "where d.DIVISION_CD like CONCAT('%', :divisionCd, '%') \n" +
-                    "and d.DIVISION_NAME like CONCAT('%', :divisionName, '%')";
+                    "join M_部門_倉庫 as dw on d.DIVISION_ID = dw.DIVISION_ID\n" +
+                    "join M_倉庫 w on dw.WAREHOUSE_ID = w.WAREHOUSE_ID \n" +
+                    "where :divisionCd IS NULL OR d.DIVISION_CD like CONCAT('%', :divisionCd, '%') \n" +
+                    "and :divisionName IS NULL OR d.DIVISION_NAME like CONCAT('%', :divisionName, '%') \n" +
+                    "and :warehouseCd IS NULL OR w.WAREHOUSE_CD like CONCAT('%', :warehouseCd, '%')";
 }
