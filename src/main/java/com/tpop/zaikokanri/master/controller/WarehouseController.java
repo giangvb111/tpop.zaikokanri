@@ -18,8 +18,8 @@ public class WarehouseController {
     private final WarehouseServiceImpl warehouseService;
 
     @PostMapping(value = "/create")
-    public ResponseEntity<List<Warehouse>> createWarehouse(@RequestBody List<Warehouse> categoryList, @RequestParam(value = "lang") String lang) throws CommonException {
-        return ResponseEntity.ok(warehouseService.createWarehouse(categoryList, lang));
+    public ResponseEntity<List<Warehouse>> createWarehouse(@RequestBody List<Warehouse> warehouseList, @RequestParam(value = "lang") String lang) throws CommonException {
+        return ResponseEntity.ok(warehouseService.createWarehouse(warehouseList, lang));
     }
 
     @GetMapping(value = "/get-warehouse-by-id")

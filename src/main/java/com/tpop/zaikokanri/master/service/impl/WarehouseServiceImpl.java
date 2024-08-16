@@ -91,7 +91,7 @@ public class WarehouseServiceImpl implements WarehouseService {
                     if (Boolean.TRUE.equals(getWarehouseByWarehouseCode(w.getWarehouseCd()))) {
                         APIErrorDetail apiErrorDetail = new APIErrorDetail(
                                 i.intValue(),
-                                FieldConstant.WAREHOUSE_NAME,
+                                FieldConstant.WAREHOUSE_CODE,
                                 MessageCode.DATA_ALREADY_EXISTS ,
                                 messageSource.getMessage(
                                         MessageCode.DATA_ALREADY_EXISTS , new Object[]{w.getWarehouseCd()}, locale
