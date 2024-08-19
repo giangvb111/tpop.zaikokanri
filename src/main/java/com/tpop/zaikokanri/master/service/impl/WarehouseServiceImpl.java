@@ -88,16 +88,44 @@ public class WarehouseServiceImpl implements WarehouseService {
                         errorDetails.add(apiErrorDetail);
                     }
 
-                    if (Boolean.TRUE.equals(getWarehouseByWarehouseCode(w.getWarehouseCd()))) {
-                        APIErrorDetail apiErrorDetail = new APIErrorDetail(
-                                i.intValue(),
-                                FieldConstant.WAREHOUSE_CODE,
-                                MessageCode.DATA_ALREADY_EXISTS ,
-                                messageSource.getMessage(
-                                        MessageCode.DATA_ALREADY_EXISTS , new Object[]{w.getWarehouseCd()}, locale
-                                )
-                        );
-                        errorDetails.add(apiErrorDetail);
+                    if (Objects.isNull(w.getId())) {
+                        if (Boolean.TRUE.equals(getWarehouseByWarehouseCode(w.getWarehouseCd()))) {
+                            APIErrorDetail apiErrorDetail = new APIErrorDetail(
+                                    i.intValue(),
+                                    FieldConstant.WAREHOUSE_CODE,
+                                    MessageCode.DATA_ALREADY_EXISTS,
+                                    messageSource.getMessage(
+                                            MessageCode.DATA_ALREADY_EXISTS, new Object[]{w.getWarehouseCd()}, locale
+                                    )
+                            );
+                            errorDetails.add(apiErrorDetail);
+                        }
+                    } else {
+                        Optional<Warehouse> optionalWarehouse = warehouseRepository.findById(w.getId());
+
+                        if (
+                                optionalWarehouse.get().getWarehouseCd().equals(w.getWarehouseCd())
+                                        && optionalWarehouse.get().getWarehouseName().equals(w.getWarehouseName())
+                        ) {
+                            APIErrorDetail apiErrorDetail = new APIErrorDetail(
+                                    i.intValue(),
+                                    FieldConstant.WAREHOUSE_CODE,
+                                    MessageCode.DATA_NOT_CHANGE,
+                                    messageSource.getMessage(
+                                            MessageCode.DATA_NOT_CHANGE, new Object[]{w.getWarehouseCd()}, locale
+                                    )
+                            );
+                            APIErrorDetail apiErrorDetail2 = new APIErrorDetail(
+                                    i.intValue(),
+                                    FieldConstant.WAREHOUSE_NAME,
+                                    MessageCode.DATA_NOT_CHANGE,
+                                    messageSource.getMessage(
+                                            MessageCode.DATA_NOT_CHANGE, new Object[]{w.getWarehouseCd()}, locale
+                                    )
+                            );
+                            errorDetails.add(apiErrorDetail);
+                            errorDetails.add(apiErrorDetail2);
+                        }
                     }
                 });
 

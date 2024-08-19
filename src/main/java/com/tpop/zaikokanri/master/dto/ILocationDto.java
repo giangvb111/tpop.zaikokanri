@@ -2,7 +2,7 @@ package com.tpop.zaikokanri.master.dto;
 
 public interface ILocationDto {
 
-    Integer getLocationId();
+    Integer getId();
 
     String getLocationCd();
 

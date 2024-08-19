@@ -3,7 +3,7 @@ package com.tpop.zaikokanri.constants;
 public class LocationQueryConstant {
 
     public static final String SEARCH_LOCATION_BY_LOCATION_ID =
-            "SELECT t.LOCATION_ID as locationId ,\n" +
+            "SELECT t.LOCATION_ID as id ,\n" +
                     "t.LOCATION_CD as locationCd ,\n" +
                     "t.LOCATION_NAME as locationName ,\n" +
                     "s.WAREHOUSE_NAME as warehouseName \n" +
@@ -12,7 +12,7 @@ public class LocationQueryConstant {
                     "WHERE t.LOCATION_ID =:locationId";
 
     public static final String SEARCH_LOCATION_PAGE =
-            "SELECT t.LOCATION_ID as locationId ,\n" +
+            "SELECT t.LOCATION_ID as id ,\n" +
                     "t.LOCATION_CD as locationCd ,\n" +
                     "t.LOCATION_NAME as locationName ,\n" +
                     "s.WAREHOUSE_NAME as warehouseName \n" +
