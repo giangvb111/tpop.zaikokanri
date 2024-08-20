@@ -1,10 +1,12 @@
 package com.tpop.zaikokanri.master.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.tpop.zaikokanri.annotation.MapFieldToColumn;
-import lombok.*;
+import com.tpop.zaikokanri.master.entities.WarehouseDivision;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
 import java.util.List;
 
 @Data
@@ -22,6 +24,6 @@ public class DivisionDto {
     @JsonProperty(value = "divisionName")
     private String divisionName;
 
-    @JsonProperty(value = "warehouseId")
-    private Integer warehouseId;
+    @JsonProperty(value = "divisionWarehouseList")
+    private List<WarehouseDivision> divisionWarehouseList;
 }

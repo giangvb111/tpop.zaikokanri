@@ -137,18 +137,17 @@ public class DivisionServiceImpl implements DivisionService {
                         );
                         errorDetails.add(apiErrorDetail);
                     }
-
-                    if (Boolean.TRUE.equals(getDivisionByDivisionCode(d.getDivisionCd()))) {
-                        APIErrorDetail apiErrorDetail = new APIErrorDetail(
-                                i.intValue(),
-                                FieldConstant.DIVISION_CD,
-                                MessageCode.DATA_ALREADY_EXISTS ,
-                                messageSource.getMessage(
-                                        MessageCode.DATA_ALREADY_EXISTS , new Object[]{d.getDivisionCd()}, locale
-                                )
-                        );
-                        errorDetails.add(apiErrorDetail);
-                    }
+                    if (Objects.isNull(d.getId()) && Boolean.TRUE.equals(getDivisionByDivisionCode(d.getDivisionCd()))) {
+                            APIErrorDetail apiErrorDetail = new APIErrorDetail(
+                                    i.intValue(),
+                                    FieldConstant.DIVISION_CD,
+                                    MessageCode.DATA_ALREADY_EXISTS ,
+                                    messageSource.getMessage(
+                                            MessageCode.DATA_ALREADY_EXISTS , new Object[]{d.getDivisionCd()}, locale
+                                    )
+                            );
+                            errorDetails.add(apiErrorDetail);
+                        }
 
                     if (d.getDivisionName().isBlank()) {
                         APIErrorDetail apiErrorDetail = new APIErrorDetail(
@@ -173,7 +172,6 @@ public class DivisionServiceImpl implements DivisionService {
                 }
 
                 List<Division> list = new ArrayList<>();
-
                 for (DivisionDto d : divisionDtoList) {
                     Division division = Division.builder()
                             .id(d.getId())
@@ -190,16 +188,25 @@ public class DivisionServiceImpl implements DivisionService {
 
                 List<WarehouseDivision> warehouseDivisionList = new ArrayList<>();
                 for (int j = 0; j < divisionDtoList.size(); j++) {
+                    DivisionDto divisionDto = divisionDtoList.get(j);
                     Integer divisionId = createdDiv.get(j).getId();
+                    List<Integer> warehouseDivisionIdList = warehouseDivisionRepository.getWarehouseDivisionIdListByDivisionId(divisionId);
+                    for (WarehouseDivision wd : divisionDto.getDivisionWarehouseList()) {
+                        if (!Objects.isNull(wd.getDiviWarehouseId())) {
+                            warehouseDivisionIdList.remove(wd.getDiviWarehouseId());
+                        }
                         WarehouseDivision warehouseDivision = WarehouseDivision.builder()
+                                .diviWarehouseId(wd.getDiviWarehouseId())
                                 .divisionId(divisionId)
-                                .warehouseId(divisionDtoList.get(j).getWarehouseId())
+                                .warehouseId(wd.getWarehouseId())
                                 .createdAt(currentTime)
                                 .createdBy("user")
                                 .updatedAt(currentTime)
                                 .updatedBy("user")
                                 .build();
                         warehouseDivisionList.add(warehouseDivision);
+                    }
+                    warehouseDivisionRepository.deleteAllByIdInBatch(warehouseDivisionIdList);
                 }
                 warehouseDivisionRepository.saveAllAndFlush(warehouseDivisionList);
             }
