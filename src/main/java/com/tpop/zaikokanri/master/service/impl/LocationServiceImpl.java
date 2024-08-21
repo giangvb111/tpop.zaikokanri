@@ -155,7 +155,7 @@ public class LocationServiceImpl implements LocationService {
                         errorDetails.add(apiErrorDetail);
                     }
 
-                    if (Boolean.TRUE.equals(getLocationByLocationCode(l.getLocationCd()))) {
+                    if (Objects.isNull(l.getId()) && Boolean.TRUE.equals(getLocationByLocationCode(l.getLocationCd()))) {
                         APIErrorDetail apiErrorDetail = new APIErrorDetail(
                                 i.intValue(),
                                 FieldConstant.LOCATION_NAME,
