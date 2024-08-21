@@ -118,7 +118,7 @@ public class CustomerServiceImpl implements CustomerService {
                         errorDetails.add(apiErrorDetail);
                     }
 
-                    if (Boolean.TRUE.equals(getCustomerByCustomerCode(c.getCustomerCd()))) {
+                    if (Objects.isNull(c.getId()) && Boolean.TRUE.equals(getCustomerByCustomerCode(c.getCustomerCd()))) {
                         APIErrorDetail apiErrorDetail = new APIErrorDetail(
                                 i.intValue(),
                                 FieldConstant.WAREHOUSE_CODE,

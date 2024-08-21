@@ -117,7 +117,7 @@ public class CategoryServiceImpl implements CategoryService {
                         errorDetails.add(apiErrorDetail);
                     }
 
-                    if (Boolean.TRUE.equals(getCategoryByCategoryCode(c.getCategoryCd()))) {
+                    if (Objects.isNull(c.getId()) && Boolean.TRUE.equals(getCategoryByCategoryCode(c.getCategoryCd()))) {
                         APIErrorDetail apiErrorDetail = new APIErrorDetail(
                                 i.intValue(),
                                 FieldConstant.CATEGORY_CD,
