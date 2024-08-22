@@ -8,5 +8,6 @@ public interface ILocationDto {
 
     String getLocationName();
 
-    String getWarehouseId();
+    Integer getWarehouseId();
+    String getWarehouseName();
 }

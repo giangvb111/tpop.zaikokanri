@@ -2,7 +2,7 @@ package com.tpop.zaikokanri.master.dto;
 
 public interface ICustomerDto {
 
-    Integer getCustomerId();
+    Integer getId();
 
     String getCustomerCd();
 

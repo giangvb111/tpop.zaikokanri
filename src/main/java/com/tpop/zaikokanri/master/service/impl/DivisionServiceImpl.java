@@ -49,11 +49,11 @@ public class DivisionServiceImpl implements DivisionService {
      * @throws CommonException
      */
     @Override
-    public ApiResponse<Object> getDivisionPage(String divisionCd, String divisionName,String warehouseCd, Integer page, Integer limit, String lang) throws CommonException {
+    public ApiResponse<Object> getDivisionPage(String divisionCd, String divisionName,String warehouseName, Integer page, Integer limit, String lang) throws CommonException {
         ApiResponse<Object> response = new ApiResponse<>();
         Pageable pageable = PageRequest.of(page, limit);
         Locale locale = Locale.forLanguageTag(lang);
-        Page<IDivisionDto> divisionPage = divisionRepository.getDivisionPage(divisionCd, divisionName,warehouseCd, pageable);
+        Page<IDivisionDto> divisionPage = divisionRepository.getDivisionPage(divisionCd, divisionName,warehouseName, pageable);
         if (divisionPage.getTotalElements() == 0) {
             response.setMessage(
                     messageSource.getMessage(
@@ -126,6 +126,21 @@ public class DivisionServiceImpl implements DivisionService {
                 List<APIErrorDetail> errorDetails = new ArrayList<>();
                 AtomicInteger i = new AtomicInteger();
                 divisionDtoList.forEach(d -> {
+
+                    if (d.getDivisionCd().isBlank()) {
+                        APIErrorDetail apiErrorDetail = new APIErrorDetail(
+                                i.intValue(),
+                                FieldConstant.DIVISION_CD,
+                                MessageCode.NOT_BLANK,
+                                messageSource.getMessage(
+                                        MessageCode.NOT_BLANK, new Object[]{
+                                                messageSource.getMessage(FieldConstant.DIVISION_CD , null , locale)
+                                        }, locale
+                                )
+                        );
+                        errorDetails.add(apiErrorDetail);
+                    }
+
                     if (d.getDivisionCd().length() > 10) {
                         APIErrorDetail apiErrorDetail = new APIErrorDetail(
                                 i.intValue(),
