@@ -15,4 +15,6 @@ public interface LocationService {
     List<Location> createLocation(List<Location> locationList, String lang) throws CommonException;
 
     Boolean getLocationByLocationCode(String locationCode);
+
+    ApiResponse<Object> deleteLocationByIdList(List<Integer> locationIdList , String lang) throws CommonException;
 }

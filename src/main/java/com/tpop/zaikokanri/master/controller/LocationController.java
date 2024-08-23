@@ -36,4 +36,9 @@ public class LocationController {
                                                             @RequestParam(value = "limit", defaultValue = "100") Integer limit) throws CommonException {
         return ResponseEntity.ok(locationService.getLocationPage(locationCd, locationName,warehouseName, page, limit ,lang));
     }
+
+    @DeleteMapping(value = "/delete-by-id-list")
+    public ResponseEntity<ApiResponse<Object>> deleteByIdList(@RequestBody List<Integer> locationIdList ,  @RequestParam(value = "lang") String lang) throws CommonException {
+        return ResponseEntity.ok(locationService.deleteLocationByIdList(locationIdList , lang));
+    }
 }

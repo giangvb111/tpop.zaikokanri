@@ -18,6 +18,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
@@ -176,5 +177,28 @@ public class CategoryServiceImpl implements CategoryService {
     public Boolean getCategoryByCategoryCode(String categoryCode) {
         Optional<Category> category = categoryRepository.findCategoryByCategoryCd(categoryCode);
         return category.isPresent();
+    }
+
+    /**
+     *
+     * @param categoryIdList
+     * @param lang
+     * @return
+     * @throws CommonException
+     */
+    @Override
+    @Transactional(rollbackFor = {CommonException.class , Exception.class})
+    public ApiResponse<Object> deleteCategoryByIdList(List<Integer> categoryIdList, String lang) throws CommonException{
+        ApiResponse<Object> response = new ApiResponse<>();
+        Locale locale = Locale.forLanguageTag(lang);
+        if (!CollectionUtils.isEmpty(categoryIdList)) {
+            categoryRepository.deleteAllById(categoryIdList);
+        }
+        response.setStatus(ResponseStatusConst.SUCCESS);
+        response.setMessage(
+                messageSource.getMessage(MessageCode.DELETE_SUCCESS , null, locale)
+        );
+        response.setData(null);
+        return response;
     }
 }

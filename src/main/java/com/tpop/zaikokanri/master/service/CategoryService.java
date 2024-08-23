@@ -17,4 +17,6 @@ public interface CategoryService {
     List<Category> createCategory(List<Category> categoryList, String lang) throws CommonException;
 
     Boolean getCategoryByCategoryCode(String categoryCode);
+
+    ApiResponse<Object> deleteCategoryByIdList(List<Integer> categoryIdList , String lang) throws CommonException;
 }

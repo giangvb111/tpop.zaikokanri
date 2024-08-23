@@ -40,4 +40,9 @@ public class WarehouseController {
     public ResponseEntity<ApiResponse<Object>> getWarehouseList() {
         return ResponseEntity.ok(warehouseService.getWarehouseList());
     }
+
+    @DeleteMapping(value = "/delete-by-id-list")
+    public ResponseEntity<ApiResponse<Object>> deleteByIdList(@RequestBody List<Integer> warehouseIdList ,  @RequestParam(value = "lang") String lang) throws CommonException {
+        return ResponseEntity.ok(warehouseService.deleteWarehouseByIdList(warehouseIdList , lang));
+    }
 }

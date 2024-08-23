@@ -36,4 +36,9 @@ public class CategoryController {
         return ResponseEntity.ok(categoryService.getCategoryPage( categoryDto ,page ,limit ,lang));
     }
 
+    @DeleteMapping(value = "/delete-by-id-list")
+    public ResponseEntity<ApiResponse<Object>> deleteByIdList(@RequestBody List<Integer> categoryIdList ,  @RequestParam(value = "lang") String lang) throws CommonException {
+        return ResponseEntity.ok(categoryService.deleteCategoryByIdList(categoryIdList , lang));
+    }
+
 }

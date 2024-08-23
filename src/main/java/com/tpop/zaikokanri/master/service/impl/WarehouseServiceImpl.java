@@ -208,4 +208,27 @@ public class WarehouseServiceImpl implements WarehouseService {
         return  response;
     }
 
+    /**
+     *
+     * @param warehouseIdList
+     * @param lang
+     * @return
+     * @throws CommonException
+     */
+    @Override
+    @Transactional(rollbackFor = {CommonException.class , Exception.class})
+    public ApiResponse<Object> deleteWarehouseByIdList(List<Integer> warehouseIdList, String lang) throws CommonException {
+        ApiResponse<Object> response = new ApiResponse<>();
+        Locale locale = Locale.forLanguageTag(lang);
+        if (!CollectionUtils.isEmpty(warehouseIdList)) {
+            warehouseRepository.deleteAllById(warehouseIdList);
+        }
+        response.setStatus(ResponseStatusConst.SUCCESS);
+        response.setMessage(
+                messageSource.getMessage(MessageCode.DELETE_SUCCESS , null, locale)
+        );
+        response.setData(null);
+        return response;
+    }
+
 }
