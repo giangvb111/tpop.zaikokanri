@@ -204,4 +204,27 @@ public class LocationServiceImpl implements LocationService {
 
         return createdLocation;
     }
+
+    /**
+     *
+     * @param locationIdList
+     * @param lang
+     * @return
+     * @throws CommonException
+     */
+    @Override
+    @Transactional(rollbackFor = {CommonException.class , Exception.class})
+    public ApiResponse<Object> deleteLocationByIdList(List<Integer> locationIdList, String lang) throws CommonException {
+        ApiResponse<Object> response = new ApiResponse<>();
+        Locale locale = Locale.forLanguageTag(lang);
+        if (!CollectionUtils.isEmpty(locationIdList)) {
+            locationRepository.deleteAllById(locationIdList);
+        }
+        response.setStatus(ResponseStatusConst.SUCCESS);
+        response.setMessage(
+                messageSource.getMessage(MessageCode.DELETE_SUCCESS , null, locale)
+        );
+        response.setData(null);
+        return response;
+    }
 }

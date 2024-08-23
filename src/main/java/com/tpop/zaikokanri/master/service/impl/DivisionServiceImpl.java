@@ -40,7 +40,6 @@ public class DivisionServiceImpl implements DivisionService {
     private final MessageSource messageSource;
 
     /**
-     *
      * @param divisionCd
      * @param divisionName
      * @param page
@@ -49,11 +48,11 @@ public class DivisionServiceImpl implements DivisionService {
      * @throws CommonException
      */
     @Override
-    public ApiResponse<Object> getDivisionPage(String divisionCd, String divisionName,String warehouseName, Integer page, Integer limit, String lang) throws CommonException {
+    public ApiResponse<Object> getDivisionPage(String divisionCd, String divisionName, String warehouseName, Integer page, Integer limit, String lang) throws CommonException {
         ApiResponse<Object> response = new ApiResponse<>();
         Pageable pageable = PageRequest.of(page, limit);
         Locale locale = Locale.forLanguageTag(lang);
-        Page<IDivisionDto> divisionPage = divisionRepository.getDivisionPage(divisionCd, divisionName,warehouseName, pageable);
+        Page<IDivisionDto> divisionPage = divisionRepository.getDivisionPage(divisionCd, divisionName, warehouseName, pageable);
         if (divisionPage.getTotalElements() == 0) {
             response.setMessage(
                     messageSource.getMessage(
@@ -115,7 +114,7 @@ public class DivisionServiceImpl implements DivisionService {
      * @throws CommonException
      */
     @Override
-    @Transactional(rollbackFor = {CommonException.class , Exception.class})
+    @Transactional(rollbackFor = {CommonException.class, Exception.class})
     public List<IDivisionDto> createDivision(List<DivisionDto> divisionDtoList, String lang) throws CommonException {
         List<IDivisionDto> createdDivision;
         List<Division> createdDiv = new ArrayList<>();
@@ -134,7 +133,7 @@ public class DivisionServiceImpl implements DivisionService {
                                 MessageCode.NOT_BLANK,
                                 messageSource.getMessage(
                                         MessageCode.NOT_BLANK, new Object[]{
-                                                messageSource.getMessage(FieldConstant.DIVISION_CD , null , locale)
+                                                messageSource.getMessage(FieldConstant.DIVISION_CD, null, locale)
                                         }, locale
                                 )
                         );
@@ -153,16 +152,16 @@ public class DivisionServiceImpl implements DivisionService {
                         errorDetails.add(apiErrorDetail);
                     }
                     if (Objects.isNull(d.getId()) && Boolean.TRUE.equals(getDivisionByDivisionCode(d.getDivisionCd()))) {
-                            APIErrorDetail apiErrorDetail = new APIErrorDetail(
-                                    i.intValue(),
-                                    FieldConstant.DIVISION_CD,
-                                    MessageCode.DATA_ALREADY_EXISTS ,
-                                    messageSource.getMessage(
-                                            MessageCode.DATA_ALREADY_EXISTS , new Object[]{d.getDivisionCd()}, locale
-                                    )
-                            );
-                            errorDetails.add(apiErrorDetail);
-                        }
+                        APIErrorDetail apiErrorDetail = new APIErrorDetail(
+                                i.intValue(),
+                                FieldConstant.DIVISION_CD,
+                                MessageCode.DATA_ALREADY_EXISTS,
+                                messageSource.getMessage(
+                                        MessageCode.DATA_ALREADY_EXISTS, new Object[]{d.getDivisionCd()}, locale
+                                )
+                        );
+                        errorDetails.add(apiErrorDetail);
+                    }
 
                     if (d.getDivisionName().isBlank()) {
                         APIErrorDetail apiErrorDetail = new APIErrorDetail(
@@ -171,7 +170,7 @@ public class DivisionServiceImpl implements DivisionService {
                                 MessageCode.NOT_BLANK,
                                 messageSource.getMessage(
                                         MessageCode.NOT_BLANK, new Object[]{
-                                                messageSource.getMessage(FieldConstant.DIVISION_NAME , null , locale)
+                                                messageSource.getMessage(FieldConstant.DIVISION_NAME, null, locale)
                                         }, locale
                                 )
                         );
@@ -205,23 +204,25 @@ public class DivisionServiceImpl implements DivisionService {
                 for (int j = 0; j < divisionDtoList.size(); j++) {
                     DivisionDto divisionDto = divisionDtoList.get(j);
                     Integer divisionId = createdDiv.get(j).getId();
-                    List<Integer> warehouseDivisionIdList = warehouseDivisionRepository.getWarehouseDivisionIdListByDivisionId(divisionId);
-                    for (WarehouseDivision wd : divisionDto.getDivisionWarehouseList()) {
-                        if (!Objects.isNull(wd.getDiviWarehouseId())) {
-                            warehouseDivisionIdList.remove(wd.getDiviWarehouseId());
+                    if (!CollectionUtils.isEmpty(divisionDto.getDivisionWarehouseList())) {
+                        List<Integer> warehouseDivisionIdList = warehouseDivisionRepository.getWarehouseDivisionIdListByDivisionId(divisionId);
+                        for (WarehouseDivision wd : divisionDto.getDivisionWarehouseList()) {
+                            if (!Objects.isNull(wd.getDiviWarehouseId())) {
+                                warehouseDivisionIdList.remove(wd.getDiviWarehouseId());
+                            }
+                            WarehouseDivision warehouseDivision = WarehouseDivision.builder()
+                                    .diviWarehouseId(wd.getDiviWarehouseId())
+                                    .divisionId(divisionId)
+                                    .warehouseId(wd.getWarehouseId())
+                                    .createdAt(currentTime)
+                                    .createdBy("user")
+                                    .updatedAt(currentTime)
+                                    .updatedBy("user")
+                                    .build();
+                            warehouseDivisionList.add(warehouseDivision);
                         }
-                        WarehouseDivision warehouseDivision = WarehouseDivision.builder()
-                                .diviWarehouseId(wd.getDiviWarehouseId())
-                                .divisionId(divisionId)
-                                .warehouseId(wd.getWarehouseId())
-                                .createdAt(currentTime)
-                                .createdBy("user")
-                                .updatedAt(currentTime)
-                                .updatedBy("user")
-                                .build();
-                        warehouseDivisionList.add(warehouseDivision);
+                        warehouseDivisionRepository.deleteAllByIdInBatch(warehouseDivisionIdList);
                     }
-                    warehouseDivisionRepository.deleteAllByIdInBatch(warehouseDivisionIdList);
                 }
                 warehouseDivisionRepository.saveAllAndFlush(warehouseDivisionList);
             }
