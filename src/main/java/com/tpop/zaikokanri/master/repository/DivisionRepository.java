@@ -23,7 +23,7 @@ public interface DivisionRepository extends JpaRepository<Division, Integer> {
     List<IDivisionDto> getDivisionByDivisionIdList (List<Integer> divisionIdList) throws CommonException;
 
     @Query(nativeQuery = true , value = DivisionQueryConstant.SEARCH_DIVISION)
-    Page<IDivisionDto> getDivisionPage (String divisionCd, String divisionName ,String warehouseCd, Pageable pageable) throws CommonException;
+    Page<IDivisionDto> getDivisionPage (String divisionCd, String divisionName ,String warehouseName, Pageable pageable) throws CommonException;
 
     Optional<Division> findDivisionByDivisionCd(String divisionCode);
 

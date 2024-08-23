@@ -4,7 +4,7 @@ public class CustomerQueryConstant {
 
     public static final String SEARCH_CUSTOMER =
             "SELECT \n" +
-                    "    c.CUSTOMER_ID AS customerId,\n" +
+                    "    c.CUSTOMER_ID AS id,\n" +
                     "    c.CUSTOMER_CD AS customerCd,\n" +
                     "    c.CUSTOMER_NAME AS customerName,\n" +
                     "    c.[CUSTOMER_NAME(FORMAL)] AS customerNameFormal,\n" +

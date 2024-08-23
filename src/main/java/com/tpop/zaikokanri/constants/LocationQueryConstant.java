@@ -15,6 +15,7 @@ public class LocationQueryConstant {
             "SELECT t.LOCATION_ID as id ,\n" +
                     "t.LOCATION_CD as locationCd ,\n" +
                     "t.LOCATION_NAME as locationName ,\n" +
+                    "s.WAREHOUSE_ID as warehouseId ,\n" +
                     "s.WAREHOUSE_NAME as warehouseName \n" +
                     "FROM M_棚番 AS t\n" +
                     "JOIN M_倉庫 AS s ON t.WAREHOUSE_ID = s.WAREHOUSE_ID\n" +

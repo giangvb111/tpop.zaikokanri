@@ -31,12 +31,25 @@ public class DivisionQueryConstant {
 
 
     public static final String SEARCH_DIVISION =
-            "select d.DIVISION_ID as id , d.DIVISION_CD as divisionCd , d.DIVISION_NAME as divisionName ," +
-                    "w.WAREHOUSE_CD as warehouseCd, w.WAREHOUSE_NAME as warehouseName  \n" +
-                    "from M_部門 as d\n" +
-                    "join M_部門_倉庫 as dw on d.DIVISION_ID = dw.DIVISION_ID\n" +
-                    "join M_倉庫 w on dw.WAREHOUSE_ID = w.WAREHOUSE_ID \n" +
-                    "where :divisionCd IS NULL OR d.DIVISION_CD like CONCAT('%', :divisionCd, '%') \n" +
-                    "and :divisionName IS NULL OR d.DIVISION_NAME like CONCAT('%', :divisionName, '%') \n" +
-                    "and :warehouseCd IS NULL OR w.WAREHOUSE_CD like CONCAT('%', :warehouseCd, '%')";
+            "select \n" +
+                    "    d.DIVISION_ID as id,\n" +
+                    "    d.DIVISION_CD as divisionCd,\n" +
+                    "    d.DIVISION_NAME as divisionName,\n" +
+                    "    STRING_AGG(w.WAREHOUSE_CD, ', ') as warehouseCd,\n" +
+                    "    STRING_AGG(w.WAREHOUSE_NAME, ', ') as warehouseName\n" +
+                    "from M_部門 d\n" +
+                    "join M_部門_倉庫 dw on d.DIVISION_ID = dw.DIVISION_ID\n" +
+                    "join M_倉庫 w on dw.WAREHOUSE_ID = w.WAREHOUSE_ID\n" +
+                    "where \n" +
+                    "   (:divisionCd IS NULL OR d.DIVISION_CD like CONCAT('%', :divisionCd, '%'))\n" +
+                    "   and (:divisionName IS NULL OR d.DIVISION_NAME like CONCAT('%', :divisionName, '%'))\n" +
+                    "   and (:warehouseName IS NULL OR EXISTS (\n" +
+                    "           select 1 \n" +
+                    "           from M_倉庫 w2 \n" +
+                    "           join M_部門_倉庫 dw2 on dw2.WAREHOUSE_ID = w2.WAREHOUSE_ID \n" +
+                    "           where dw2.DIVISION_ID = d.DIVISION_ID \n" +
+                    "           and w2.WAREHOUSE_NAME like CONCAT('%', :warehouseName, '%')\n" +
+                    "       ))\n" +
+                    "group by d.DIVISION_ID, d.DIVISION_CD, d.DIVISION_NAME\n";
+
 }

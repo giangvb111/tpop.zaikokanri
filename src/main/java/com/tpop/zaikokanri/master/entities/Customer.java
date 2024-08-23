@@ -69,7 +69,7 @@ public class Customer extends BaseEntity{
     @Column(name = "PIC_NAME")
     private String picName;
 
-    @Column(name = "MAIL_ADRESS")
+    @Column(name = "MAIL_ADDRESS")
     private String mailAddress;
 
     @Column(name = "HOME_PAGE")
