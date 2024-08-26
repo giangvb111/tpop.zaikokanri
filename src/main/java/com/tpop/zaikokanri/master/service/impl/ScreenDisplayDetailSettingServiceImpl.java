@@ -5,8 +5,8 @@ import com.tpop.zaikokanri.constants.MessageCode;
 import com.tpop.zaikokanri.constants.ResponseStatusConst;
 import com.tpop.zaikokanri.exceptions.CommonException;
 import com.tpop.zaikokanri.master.dto.IScreenDisplaySettingDto;
-import com.tpop.zaikokanri.master.dto.ScreenDisplaySettingDto;
 import com.tpop.zaikokanri.master.repository.ScreenDisplaySettingRepository;
+import com.tpop.zaikokanri.master.service.ScreenDisplayDetailSettingService;
 import com.tpop.zaikokanri.master.service.ScreenDisplaySettingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
@@ -19,7 +19,7 @@ import java.util.Locale;
 
 @Service
 @RequiredArgsConstructor
-public class ScreenDisplaySettingServiceImpl implements ScreenDisplaySettingService {
+public class ScreenDisplayDetailSettingServiceImpl implements ScreenDisplayDetailSettingService {
 
     private final ScreenDisplaySettingRepository screenDisplaySettingRepository;
 
@@ -77,6 +77,20 @@ public class ScreenDisplaySettingServiceImpl implements ScreenDisplaySettingServ
         }
         response.setStatus(ResponseStatusConst.SUCCESS);
         response.setData(childrenScreenList);
+        return response;
+    }
+
+    /**
+     *
+     * @param functionCode
+     * @param lang
+     * @return Screen Detail Setting By Function Code
+     */
+    @Override
+    public ApiResponse<Object> getScreenDetailSettingByFunctionCode(String functionCode,String displaySection, String lang) {
+        ApiResponse<Object> response = new ApiResponse<>();
+        Locale locale = Locale.forLanguageTag(lang);
+
         return response;
     }
 
