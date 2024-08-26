@@ -44,6 +44,17 @@ public class WarehouseServiceImpl implements WarehouseService {
 
     /**
      *
+     * @param warehouseName
+     * @return
+     */
+    @Override
+    public Boolean getWarehouseByWarehouseName(String warehouseName) {
+        Optional<Warehouse> warehouse = warehouseRepository.findWarehouseByWarehouseName(warehouseName);
+        return warehouse.isPresent();
+    }
+
+    /**
+     *
      * @param warehouseList
      * @param lang
      * @return
@@ -100,6 +111,48 @@ public class WarehouseServiceImpl implements WarehouseService {
                             errorDetails.add(apiErrorDetail);
                         }
 
+                    if (Objects.isNull(w.getId()) && Boolean.TRUE.equals(getWarehouseByWarehouseName(w.getWarehouseName()))) {
+                        APIErrorDetail apiErrorDetail = new APIErrorDetail(
+                                i.intValue(),
+                                FieldConstant.WAREHOUSE_NAME,
+                                MessageCode.DATA_ALREADY_EXISTS,
+                                messageSource.getMessage(
+                                        MessageCode.DATA_ALREADY_EXISTS, new Object[]{w.getWarehouseName()}, locale
+                                )
+                        );
+                        errorDetails.add(apiErrorDetail);
+                    }
+
+                    if (!Objects.isNull(w.getId())) {
+                        Optional<Warehouse> optionalWarehouse = warehouseRepository.findById(w.getId());
+                        if (optionalWarehouse.isPresent()
+                                && !optionalWarehouse.get().getWarehouseCd().equals(w.getWarehouseCd())
+                                && Boolean.TRUE.equals(getWarehouseByWarehouseCode(w.getWarehouseCd()))) {
+                            APIErrorDetail apiErrorDetail = new APIErrorDetail(
+                                    i.intValue(),
+                                    FieldConstant.WAREHOUSE_CODE,
+                                    MessageCode.DATA_ALREADY_EXISTS,
+                                    messageSource.getMessage(
+                                            MessageCode.DATA_ALREADY_EXISTS, new Object[]{w.getWarehouseCd()}, locale
+                                    )
+                            );
+                            errorDetails.add(apiErrorDetail);
+                        }
+
+                        if (optionalWarehouse.isPresent()
+                                && !optionalWarehouse.get().getWarehouseName().equals(w.getWarehouseName())
+                                && Boolean.TRUE.equals(getWarehouseByWarehouseName(w.getWarehouseName()))) {
+                            APIErrorDetail apiErrorDetail = new APIErrorDetail(
+                                    i.intValue(),
+                                    FieldConstant.WAREHOUSE_NAME,
+                                    MessageCode.DATA_ALREADY_EXISTS,
+                                    messageSource.getMessage(
+                                            MessageCode.DATA_ALREADY_EXISTS, new Object[]{w.getWarehouseName()}, locale
+                                    )
+                            );
+                            errorDetails.add(apiErrorDetail);
+                        }
+                    }
                 });
 
                 if (!CollectionUtils.isEmpty(errorDetails)) {
