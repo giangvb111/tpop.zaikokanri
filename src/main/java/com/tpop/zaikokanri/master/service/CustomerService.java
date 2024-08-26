@@ -15,7 +15,7 @@ public interface CustomerService {
 
     List<Customer> createdCustomer(List<Customer> customerList, String lang) throws CommonException;
 
-//    ApiResponse<Object> getWarehouseList();
-
     Boolean getCustomerByCustomerCode(String customerCode);
+
+    ApiResponse<Object> deleteCustomerByIdList(List<Integer> customerIdList , String lang) throws CommonException;
 }

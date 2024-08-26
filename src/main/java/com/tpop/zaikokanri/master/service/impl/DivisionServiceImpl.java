@@ -8,8 +8,8 @@ import com.tpop.zaikokanri.exceptions.APIErrorDetail;
 import com.tpop.zaikokanri.exceptions.CommonException;
 import com.tpop.zaikokanri.master.dto.DivisionDto;
 import com.tpop.zaikokanri.master.dto.IDivisionDto;
+import com.tpop.zaikokanri.master.dto.IWarehouseDto;
 import com.tpop.zaikokanri.master.entities.Division;
-import com.tpop.zaikokanri.master.entities.Location;
 import com.tpop.zaikokanri.master.entities.Warehouse;
 import com.tpop.zaikokanri.master.entities.WarehouseDivision;
 import com.tpop.zaikokanri.master.repository.DivisionRepository;
@@ -241,4 +241,43 @@ public class DivisionServiceImpl implements DivisionService {
         }
         return createdDivision;
     }
+
+    /**
+     *
+     * @param divisionIdList
+     * @param lang
+     * @return
+     * @throws CommonException
+     */
+    @Override
+    @Transactional(rollbackFor = {CommonException.class , Exception.class})
+    public ApiResponse<Object> deleteDivisionByIdList(List<Integer> divisionIdList, String lang) throws CommonException {
+        ApiResponse<Object> response = new ApiResponse<>();
+        Locale locale = Locale.forLanguageTag(lang);
+        if (!CollectionUtils.isEmpty(divisionIdList)) {
+            warehouseDivisionRepository.deleteAllByDivisionIdList(divisionIdList);
+            divisionRepository.deleteAllById(divisionIdList);
+        }
+        response.setStatus(ResponseStatusConst.SUCCESS);
+        response.setMessage(
+                messageSource.getMessage(MessageCode.DELETE_SUCCESS , null, locale)
+        );
+        response.setData(null);
+        return response;
+    }
+
+    /**
+     *
+     * @param warehouseIdList
+     * @return
+     */
+    @Override
+    public List<IWarehouseDto> findWarehouseIdListUsedInDivision(List<Integer> warehouseIdList) {
+        List<IWarehouseDto> listWarehouse = new ArrayList<>();
+        if (!CollectionUtils.isEmpty(warehouseIdList)) {
+            listWarehouse = divisionRepository.findWarehouseListUsedInDivision(warehouseIdList);
+        }
+        return listWarehouse;
+    }
+
 }

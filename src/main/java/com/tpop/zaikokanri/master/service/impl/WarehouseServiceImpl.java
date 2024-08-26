@@ -6,6 +6,7 @@ import com.tpop.zaikokanri.constants.MessageCode;
 import com.tpop.zaikokanri.constants.ResponseStatusConst;
 import com.tpop.zaikokanri.exceptions.APIErrorDetail;
 import com.tpop.zaikokanri.exceptions.CommonException;
+import com.tpop.zaikokanri.master.dto.IWarehouseDto;
 import com.tpop.zaikokanri.master.entities.Warehouse;
 import com.tpop.zaikokanri.master.repository.WarehouseRepository;
 import com.tpop.zaikokanri.master.service.WarehouseService;
@@ -29,10 +30,13 @@ public class WarehouseServiceImpl implements WarehouseService {
 
     private final WarehouseRepository warehouseRepository;
 
+    private final LocationServiceImpl locationService;
+
+    private final DivisionServiceImpl divisionService;
+
     private final MessageSource messageSource;
 
     /**
-     *
      * @param warehouseCode
      * @return
      */
@@ -43,6 +47,7 @@ public class WarehouseServiceImpl implements WarehouseService {
     }
 
     /**
+<<<<<<< Updated upstream
      *
      * @param warehouseName
      * @return
@@ -55,30 +60,32 @@ public class WarehouseServiceImpl implements WarehouseService {
 
     /**
      *
+=======
+>>>>>>> Stashed changes
      * @param warehouseList
      * @param lang
      * @return
      * @throws CommonException
      */
     @Override
-    @Transactional(rollbackFor = {CommonException.class , Exception.class})
+    @Transactional(rollbackFor = {CommonException.class, Exception.class})
     public List<Warehouse> createWarehouse(List<Warehouse> warehouseList, String lang) throws CommonException {
-        List<Warehouse> createdWarehouse  = new ArrayList<>();
+        List<Warehouse> createdWarehouse = new ArrayList<>();
         try {
-            LocalDateTime current  = LocalDateTime.now();
+            LocalDateTime current = LocalDateTime.now();
             Locale locale = Locale.forLanguageTag(lang);
             if (!CollectionUtils.isEmpty(warehouseList)) {
                 List<APIErrorDetail> errorDetails = new ArrayList<>();
                 AtomicInteger i = new AtomicInteger();
-                warehouseList.forEach(w ->{
+                warehouseList.forEach(w -> {
                     if (w.getWarehouseCd().isBlank()) {
                         APIErrorDetail apiErrorDetail = new APIErrorDetail(
                                 i.intValue(),
                                 FieldConstant.WAREHOUSE_CODE,
-                                MessageCode.NOT_BLANK ,
+                                MessageCode.NOT_BLANK,
                                 messageSource.getMessage(
-                                        MessageCode.NOT_BLANK , new Object[]{
-                                                messageSource.getMessage(FieldConstant.WAREHOUSE_CODE , null , locale)
+                                        MessageCode.NOT_BLANK, new Object[]{
+                                                messageSource.getMessage(FieldConstant.WAREHOUSE_CODE, null, locale)
                                         }, locale
                                 )
                         );
@@ -91,8 +98,8 @@ public class WarehouseServiceImpl implements WarehouseService {
                                 FieldConstant.WAREHOUSE_NAME,
                                 MessageCode.DATA_ALREADY_EXISTS,
                                 messageSource.getMessage(
-                                        MessageCode.NOT_BLANK , new Object[]{
-                                                messageSource.getMessage(FieldConstant.WAREHOUSE_NAME , null , locale)
+                                        MessageCode.NOT_BLANK, new Object[]{
+                                                messageSource.getMessage(FieldConstant.WAREHOUSE_NAME, null, locale)
                                         }, locale
                                 )
                         );
@@ -100,16 +107,16 @@ public class WarehouseServiceImpl implements WarehouseService {
                     }
 
                     if (Objects.isNull(w.getId()) && Boolean.TRUE.equals(getWarehouseByWarehouseCode(w.getWarehouseCd()))) {
-                            APIErrorDetail apiErrorDetail = new APIErrorDetail(
-                                    i.intValue(),
-                                    FieldConstant.WAREHOUSE_CODE,
-                                    MessageCode.DATA_ALREADY_EXISTS,
-                                    messageSource.getMessage(
-                                            MessageCode.DATA_ALREADY_EXISTS, new Object[]{w.getWarehouseCd()}, locale
-                                    )
-                            );
-                            errorDetails.add(apiErrorDetail);
-                        }
+                        APIErrorDetail apiErrorDetail = new APIErrorDetail(
+                                i.intValue(),
+                                FieldConstant.WAREHOUSE_CODE,
+                                MessageCode.DATA_ALREADY_EXISTS,
+                                messageSource.getMessage(
+                                        MessageCode.DATA_ALREADY_EXISTS, new Object[]{w.getWarehouseCd()}, locale
+                                )
+                        );
+                        errorDetails.add(apiErrorDetail);
+                    }
 
                     if (Objects.isNull(w.getId()) && Boolean.TRUE.equals(getWarehouseByWarehouseName(w.getWarehouseName()))) {
                         APIErrorDetail apiErrorDetail = new APIErrorDetail(
@@ -163,7 +170,7 @@ public class WarehouseServiceImpl implements WarehouseService {
                 }
 
                 List<Warehouse> list = new ArrayList<>();
-                for (Warehouse w: warehouseList) {
+                for (Warehouse w : warehouseList) {
                     Warehouse warehouse = Warehouse.builder()
                             .id(w.getId())
                             .warehouseCd(w.getWarehouseCd())
@@ -178,12 +185,12 @@ public class WarehouseServiceImpl implements WarehouseService {
                 createdWarehouse = warehouseRepository.saveAllAndFlush(list);
             }
 
-        }catch (CommonException e) {
+        } catch (CommonException e) {
             throw e;
         } catch (Exception e) {
             throw new CommonException(
-                    MessageCode.INTERNAL_ERROR ,
-                    e.getMessage() ,
+                    MessageCode.INTERNAL_ERROR,
+                    e.getMessage(),
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
@@ -192,7 +199,6 @@ public class WarehouseServiceImpl implements WarehouseService {
     }
 
     /**
-     *
      * @return
      */
     @Override
@@ -208,7 +214,6 @@ public class WarehouseServiceImpl implements WarehouseService {
 
 
     /**
-     *
      * @param warehouseId
      * @param lang
      * @return
@@ -227,13 +232,12 @@ public class WarehouseServiceImpl implements WarehouseService {
                 result.setMessage(null);
             }
             result.setStatus(ResponseStatusConst.SUCCESS);
-            result.setData(optionalWarehouse) ;
+            result.setData(optionalWarehouse);
         }
         return result;
     }
 
     /**
-     *
      * @param warehouseCd
      * @param warehouseName
      * @param page
@@ -242,11 +246,11 @@ public class WarehouseServiceImpl implements WarehouseService {
      * @throws CommonException
      */
     @Override
-    public ApiResponse<Object> getWarehousePage(String warehouseCd,String warehouseName, Integer page, Integer limit , String lang) throws CommonException {
+    public ApiResponse<Object> getWarehousePage(String warehouseCd, String warehouseName, Integer page, Integer limit, String lang) throws CommonException {
         ApiResponse<Object> response = new ApiResponse<>();
         Locale locale = Locale.forLanguageTag(lang);
         Pageable pageable = PageRequest.of(page, limit);
-        Page<Warehouse> warehousePage = warehouseRepository.findByWarehouseCdContainingAndWarehouseNameContaining(warehouseCd , warehouseName ,pageable);
+        Page<Warehouse> warehousePage = warehouseRepository.findByWarehouseCdContainingAndWarehouseNameContaining(warehouseCd, warehouseName, pageable);
         if (warehousePage.getTotalElements() == 0) {
             response.setMessage(
                     messageSource.getMessage(
@@ -258,30 +262,84 @@ public class WarehouseServiceImpl implements WarehouseService {
         }
         response.setStatus(ResponseStatusConst.SUCCESS);
         response.setData(warehousePage);
-        return  response;
+        return response;
     }
 
     /**
-     *
      * @param warehouseIdList
      * @param lang
      * @return
      * @throws CommonException
      */
     @Override
-    @Transactional(rollbackFor = {CommonException.class , Exception.class})
+    @Transactional(rollbackFor = {CommonException.class, Exception.class})
     public ApiResponse<Object> deleteWarehouseByIdList(List<Integer> warehouseIdList, String lang) throws CommonException {
         ApiResponse<Object> response = new ApiResponse<>();
-        Locale locale = Locale.forLanguageTag(lang);
-        if (!CollectionUtils.isEmpty(warehouseIdList)) {
-            warehouseRepository.deleteAllById(warehouseIdList);
+        try {
+            Locale locale = Locale.forLanguageTag(lang);
+            if (!CollectionUtils.isEmpty(warehouseIdList)) {
+                // check Warehouse used in Location
+                List<IWarehouseDto> warehouseList = locationService.findWarehouseIdListUsedInLocation(warehouseIdList);
+                List<APIErrorDetail> errorDetails = new ArrayList<>();
+                AtomicInteger i = new AtomicInteger();
+                if (!CollectionUtils.isEmpty(warehouseList)) {
+                    warehouseList.forEach(s -> {
+                        if (warehouseIdList.contains(s.getId())) {
+                            APIErrorDetail apiErrorDetail = new APIErrorDetail(
+                                    i.intValue(),
+                                    FieldConstant.WAREHOUSE_NAME,
+                                    MessageCode.IN_USING,
+                                    messageSource.getMessage(MessageCode.IN_USING, new Object[]{s.getWarehouseName(),
+                                            messageSource.getMessage(FieldConstant.LOCATION, null, locale)}, locale)
+                            );
+                            errorDetails.add(apiErrorDetail);
+                        }
+                    });
+                }
+
+                // check Warehouse used in Division
+                List<IWarehouseDto> warehouseDivisionList = divisionService.findWarehouseIdListUsedInDivision(warehouseIdList);
+                if (!CollectionUtils.isEmpty(warehouseDivisionList)) {
+                    warehouseDivisionList.forEach(s -> {
+                        if (warehouseIdList.contains(s.getId())) {
+                            APIErrorDetail apiErrorDetail = new APIErrorDetail(
+                                    i.intValue(),
+                                    FieldConstant.WAREHOUSE_NAME,
+                                    MessageCode.IN_USING,
+                                    messageSource.getMessage(MessageCode.IN_USING, new Object[]{s.getWarehouseName(),
+                                            messageSource.getMessage(FieldConstant.DIVISION, null, locale)}, locale)
+                            );
+                            errorDetails.add(apiErrorDetail);
+                        }
+                    });
+                }
+
+                if (!CollectionUtils.isEmpty(errorDetails)) {
+                    throw new CommonException()
+                            .setErrorCode(MessageCode.BAD_REQUEST)
+                            .setStatusCode(HttpStatus.BAD_REQUEST)
+                            .setErrorDetails(errorDetails);
+                }
+
+                warehouseRepository.deleteAllById(warehouseIdList);
+                response.setStatus(ResponseStatusConst.SUCCESS);
+                response.setMessage(
+                        messageSource.getMessage(MessageCode.DELETE_SUCCESS, null, locale)
+                );
+                response.setData(null);
+
+            }
+        } catch (CommonException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new CommonException(
+                    MessageCode.INTERNAL_ERROR,
+                    e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR
+            );
         }
-        response.setStatus(ResponseStatusConst.SUCCESS);
-        response.setMessage(
-                messageSource.getMessage(MessageCode.DELETE_SUCCESS , null, locale)
-        );
-        response.setData(null);
         return response;
     }
+
 
 }

@@ -194,4 +194,26 @@ public class CustomerServiceImpl implements CustomerService {
         Optional<Customer> warehouse = customerRepository.findCustomerByCustomerCd(customerCode);
         return warehouse.isPresent();
     }
+
+    /**
+     *
+     * @param customerIdList
+     * @param lang
+     * @return
+     */
+    @Override
+    @Transactional(rollbackFor = {CommonException.class, Exception.class})
+    public ApiResponse<Object> deleteCustomerByIdList(List<Integer> customerIdList, String lang) {
+        ApiResponse<Object> response = new ApiResponse<>();
+        Locale locale = Locale.forLanguageTag(lang);
+        if (!CollectionUtils.isEmpty(customerIdList)) {
+            customerRepository.deleteAllById(customerIdList);
+        }
+        response.setStatus(ResponseStatusConst.SUCCESS);
+        response.setMessage(
+                messageSource.getMessage(MessageCode.DELETE_SUCCESS , null, locale)
+        );
+        response.setData(null);
+        return response;
+    }
 }

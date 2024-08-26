@@ -17,7 +17,9 @@ public interface WarehouseService {
     ApiResponse<Object> getWarehouseList();
 
     Boolean getWarehouseByWarehouseCode(String warehouseCode);
+
     Boolean getWarehouseByWarehouseName(String warehouseName);
 
     ApiResponse<Object> deleteWarehouseByIdList(List<Integer> warehouseIdList , String lang) throws CommonException;
+
 }

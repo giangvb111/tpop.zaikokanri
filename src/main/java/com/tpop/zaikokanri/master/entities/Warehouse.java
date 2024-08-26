@@ -27,6 +27,12 @@ public class Warehouse extends BaseEntity{
     public Warehouse() {
     }
 
+    public Warehouse(Integer id, String warehouseCd, String warehouseName) {
+        this.id = id;
+        this.warehouseCd = warehouseCd;
+        this.warehouseName = warehouseName;
+    }
+
     public Warehouse(LocalDateTime createdAt, String createdBy, LocalDateTime updatedAt, String updatedBy) {
         super(createdAt, createdBy, updatedAt, updatedBy);
     }

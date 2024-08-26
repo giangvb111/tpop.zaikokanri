@@ -3,13 +3,16 @@ package com.tpop.zaikokanri.master.repository;
 
 import com.tpop.zaikokanri.constants.LocationQueryConstant;
 import com.tpop.zaikokanri.master.dto.ILocationDto;
+import com.tpop.zaikokanri.master.dto.IWarehouseDto;
 import com.tpop.zaikokanri.master.entities.Location;
+import com.tpop.zaikokanri.master.entities.Warehouse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -22,4 +25,7 @@ public interface LocationRepository extends JpaRepository<Location, Integer> {
     Page<ILocationDto> getLocationsPage(String locationCd, String locationName, String warehouseName,Pageable pageable);
 
     Optional<Location> findLocationByLocationCd(String locationCd);
+
+    @Query(nativeQuery = true , value = LocationQueryConstant.SEARCH_WAREHOUSE_ID_EXISTS_IN_LOCATION)
+    List<IWarehouseDto> findWarehouseIdListUsedInLocation(List<Integer> warehouseIdList);
 }
