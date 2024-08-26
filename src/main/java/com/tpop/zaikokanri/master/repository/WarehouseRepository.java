@@ -12,4 +12,6 @@ public interface WarehouseRepository extends JpaRepository<Warehouse, Integer> {
     Page<Warehouse> findByWarehouseCdContainingAndWarehouseNameContaining(String warehouseCd ,String warehouseName,Pageable pageable);
 
     Optional<Warehouse> findWarehouseByWarehouseCd(String warehouseCode);
+
+    Optional<Warehouse> findWarehouseByWarehouseName(String warehouseName);
 }
