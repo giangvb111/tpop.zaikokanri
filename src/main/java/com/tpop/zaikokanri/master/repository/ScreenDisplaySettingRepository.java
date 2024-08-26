@@ -18,6 +18,6 @@ public interface ScreenDisplaySettingRepository extends JpaRepository<ScreenDisp
     List<IScreenDisplaySettingDto> getParentScreenDisplaySetting(@Param("lang") String lang);
 
     @Query(nativeQuery = true , value = MenuSettingQueryConstant.SEARCH_CHILDREN_SCREEN_DISPLAY_SETTING)
-    List<IScreenDisplaySettingDto> getChildrenScreenDisplaySetting(@Param("parentIdList") List<Integer> parentIdList);
+    List<IScreenDisplaySettingDto> getChildrenScreenDisplaySetting(List<Integer> parentIdList);
 
 }
