@@ -39,7 +39,7 @@ public class CategoryServiceImpl implements CategoryService {
      * @param page
      * @param limit
      * @param lang
-     * @return
+     * @return  Category page
      * @throws CommonException
      */
     @Override
@@ -48,6 +48,7 @@ public class CategoryServiceImpl implements CategoryService {
         Locale locale = Locale.forLanguageTag(lang);
         Pageable pageable = PageRequest.of(page, limit);
         Page<ICategoryDto> categoryPage = categoryRepository.getCategory(categoryDto, pageable);
+        /* case of no data */
         if (categoryPage.getTotalElements() == 0) {
             response.setMessage(
                     messageSource.getMessage(
@@ -55,6 +56,7 @@ public class CategoryServiceImpl implements CategoryService {
                     )
             );
         } else {
+        /* case of data */
             response.setMessage(null);
         }
         response.setStatus(ResponseStatusConst.SUCCESS);
@@ -66,7 +68,7 @@ public class CategoryServiceImpl implements CategoryService {
      *
      * @param categoryId
      * @param lang
-     * @return
+     * @return Category By Category ID
      */
     @Override
     public ApiResponse<Object> getCategoryById(Integer categoryId, String lang) {
@@ -88,10 +90,11 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     /**
+     * Create Category
      *
      * @param categoryList
      * @param lang
-     * @return
+     * @return Created Category List
      * @throws CommonException
      */
     @Override
@@ -103,6 +106,7 @@ public class CategoryServiceImpl implements CategoryService {
             if (!CollectionUtils.isEmpty(categoryList)) {
                 List<APIErrorDetail> errorDetails = new ArrayList<>();
                 AtomicInteger i = new AtomicInteger();
+                //check category List
                 categoryList.forEach(c -> {
                     if (c.getCategoryCd().isBlank()) {
                         APIErrorDetail apiErrorDetail = new APIErrorDetail(
@@ -130,7 +134,7 @@ public class CategoryServiceImpl implements CategoryService {
                         errorDetails.add(apiErrorDetail);
                     }
                 });
-
+                // If errorDetails is not empty, an exception will be thrown.
                 if (!CollectionUtils.isEmpty(errorDetails)) {
                     throw new CommonException()
                             .setErrorCode(MessageCode.DATA_ALREADY_EXISTS)
@@ -138,6 +142,7 @@ public class CategoryServiceImpl implements CategoryService {
                             .setErrorDetails(errorDetails);
                 }
 
+                //add each element to the list and then execute save all
                 List<Category> list = new ArrayList<>();
                 for (Category c : categoryList) {
                     Category category = Category.builder()
@@ -170,8 +175,9 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     /**
+     * Get Category by Category Code
      * @param categoryCode
-     * @return
+     * @return true if value exists
      */
     @Override
     public Boolean getCategoryByCategoryCode(String categoryCode) {

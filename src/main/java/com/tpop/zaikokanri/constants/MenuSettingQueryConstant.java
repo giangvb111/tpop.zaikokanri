@@ -31,4 +31,24 @@ public class MenuSettingQueryConstant {
             "WHERE sm.PARENT_ID IN (:parentIdList) ORDER BY sm.DISPLAY_ORDER" ;
 
 
+    public static final String SEARCH_SCREEN_DETAIL_SETTING = "SELECT\n" +
+            "\tdds.DISP_SETTING_ID as displaySettingId,\n" +
+            "    dds.ITEM_NAME as itemName ,\n" +
+            "    dds.DISP_ORDER as displayOrder , \n" +
+            "    dds.REQUIRE_FLG as requireFlag ,\n" +
+            "    dds.DISP_FLAG as displayFlag \n" +
+            "     \n" +
+            "FROM [S_メニュー] m  \n" +
+            "JOIN [S_機能] f ON m.FUNCTION_ID = f.FUNCTION_ID \n" +
+            "JOIN [S_画面表示設定] sds ON m.FUNCTION_ID = sds.FUNCTION_ID \n" +
+            "JOIN [S_画面表示詳細設定] dds ON sds.DISP_SETTING_ID = dds.DISP_SETTING_ID \n" +
+            "WHERE f.FUNCTION_CD =:functionCode  AND sds.DISP_SECTION IN (:displaySection)\n" +
+            "ORDER BY dds.DISP_SETTING_ID , dds.DISP_ORDER" ;
+
+    public static final String GET_DISPLAY_SECTION_FUNCTION_CODE = "SELECT\n" +
+            "\tsds.DISP_SECTION \n" +
+            "FROM [S_画面表示設定] sds \n" +
+            "JOIN [S_機能] f ON sds.FUNCTION_ID = f.FUNCTION_ID " ;
+
+
 }

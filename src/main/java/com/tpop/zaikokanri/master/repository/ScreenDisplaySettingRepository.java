@@ -2,7 +2,6 @@ package com.tpop.zaikokanri.master.repository;
 
 import com.tpop.zaikokanri.constants.MenuSettingQueryConstant;
 import com.tpop.zaikokanri.master.dto.IScreenDisplaySettingDto;
-import com.tpop.zaikokanri.master.dto.ScreenDisplaySettingDto;
 import com.tpop.zaikokanri.master.entities.ScreenDisplaySetting;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
