@@ -5,7 +5,6 @@ import com.tpop.zaikokanri.constants.MessageCode;
 import com.tpop.zaikokanri.constants.ResponseStatusConst;
 import com.tpop.zaikokanri.exceptions.CommonException;
 import com.tpop.zaikokanri.master.dto.IScreenDisplaySettingDto;
-import com.tpop.zaikokanri.master.dto.ScreenDisplaySettingDto;
 import com.tpop.zaikokanri.master.repository.ScreenDisplaySettingRepository;
 import com.tpop.zaikokanri.master.service.ScreenDisplaySettingService;
 import lombok.RequiredArgsConstructor;

@@ -19,9 +19,8 @@ public class ScreenDisplayDetailSettingController {
 
     @GetMapping(value = "/get-screen-by-function-code")
     public ResponseEntity<ApiResponse<Object>> getScreenByFunctionCode(@RequestParam(value = "functionCode") String functionCode ,
-                                                                       @RequestParam(value = "displaySection") String displaySection ,
                                                                        @RequestParam(value = "lang") String lang) throws CommonException {
-        return ResponseEntity.ok(settingService.getScreenDetailSettingByFunctionCode(functionCode ,displaySection ,lang));
+        return ResponseEntity.ok(settingService.getScreenDetailSettingByFunctionCode(functionCode ,lang));
     }
 
 }
