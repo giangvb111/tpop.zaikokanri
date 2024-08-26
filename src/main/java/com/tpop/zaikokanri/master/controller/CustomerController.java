@@ -37,4 +37,9 @@ public class CustomerController {
         return ResponseEntity.ok(customerService.getCustomerPage(customerDto, page, limit ,lang));
     }
 
+    @DeleteMapping(value = "/delete-by-id-list")
+    public ResponseEntity<ApiResponse<Object>> deleteByIdList(@RequestBody List<Integer> customerIdList ,  @RequestParam(value = "lang") String lang) throws CommonException {
+        return ResponseEntity.ok(customerService.deleteCustomerByIdList(customerIdList , lang));
+    }
+
 }

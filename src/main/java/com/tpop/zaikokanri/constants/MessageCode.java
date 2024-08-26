@@ -9,5 +9,6 @@ public class MessageCode {
     public static final String BAD_REQUEST = "BAD_REQUEST";
     public static final String LENGTH_EXCEEDED = "LENGTH_EXCEEDED";
     public static final String DELETE_SUCCESS = "DELETE_SUCCESS";
+    public static final String IN_USING = "IN_USING";
 
 }

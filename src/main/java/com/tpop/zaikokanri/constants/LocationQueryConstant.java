@@ -22,4 +22,14 @@ public class LocationQueryConstant {
                     "WHERE t.LOCATION_CD LIKE CONCAT('%', :locationCd, '%') \n" +
                     "AND t.LOCATION_NAME LIKE CONCAT('%', :locationName, '%') \n" +
                     "AND s.WAREHOUSE_NAME LIKE CONCAT('%', :warehouseName, '%')";
+
+
+    public static final String SEARCH_WAREHOUSE_ID_EXISTS_IN_LOCATION =
+            "SELECT DISTINCT \n" +
+                    "\ts.WAREHOUSE_ID as id,\n" +
+                    "\ts.WAREHOUSE_CD as warehouseCd, \n" +
+                    "\ts.WAREHOUSE_NAME as warehouseName\n" +
+                    "FROM [M_棚番] as t\n" +
+                    "JOIN [M_倉庫] as s ON t.WAREHOUSE_ID  = s.WAREHOUSE_ID \n" +
+                    "WHERE t.WAREHOUSE_ID in (:warehouseIdList)";
 }

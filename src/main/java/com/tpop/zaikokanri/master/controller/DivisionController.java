@@ -39,4 +39,9 @@ public class DivisionController {
                                                             @RequestParam(value = "limit", defaultValue = "100") Integer limit) throws CommonException {
         return ResponseEntity.ok(divisionService.getDivisionPage(divisionCd,divisionName,warehouseName, page, limit, lang));
     }
+
+    @DeleteMapping(value = "/delete-by-id-list")
+    public ResponseEntity<ApiResponse<Object>> deleteByIdList(@RequestBody List<Integer> divisionIdList ,  @RequestParam(value = "lang") String lang) throws CommonException {
+        return ResponseEntity.ok(divisionService.deleteDivisionByIdList(divisionIdList , lang));
+    }
 }

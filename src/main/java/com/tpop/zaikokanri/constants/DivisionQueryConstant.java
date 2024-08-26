@@ -52,4 +52,12 @@ public class DivisionQueryConstant {
                     "       ))\n" +
                     "group by d.DIVISION_ID, d.DIVISION_CD, d.DIVISION_NAME\n";
 
+    public static final String SEARCH_WAREHOUSE_ID_EXISTS_IN_DIVISION = "SELECT DISTINCT \n" +
+            "    s.WAREHOUSE_ID as id,\n" +
+            "    s.WAREHOUSE_CD as warehouseCd,\n" +
+            "    s.WAREHOUSE_NAME as warehouseName\n" +
+            "FROM [M_部門] AS b\n" +
+            "JOIN [M_部門_倉庫] AS bs ON b.DIVISION_ID = bs.DIVISION_ID \n" +
+            "JOIN [M_倉庫] AS s ON bs.WAREHOUSE_ID = s.WAREHOUSE_ID \n" +
+            "WHERE s.WAREHOUSE_ID IN (:warehouseIdList)";
 }

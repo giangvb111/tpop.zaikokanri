@@ -7,6 +7,7 @@ import com.tpop.zaikokanri.constants.ResponseStatusConst;
 import com.tpop.zaikokanri.exceptions.APIErrorDetail;
 import com.tpop.zaikokanri.exceptions.CommonException;
 import com.tpop.zaikokanri.master.dto.ILocationDto;
+import com.tpop.zaikokanri.master.dto.IWarehouseDto;
 import com.tpop.zaikokanri.master.entities.Location;
 import com.tpop.zaikokanri.master.entities.Warehouse;
 import com.tpop.zaikokanri.master.repository.LocationRepository;
@@ -226,5 +227,19 @@ public class LocationServiceImpl implements LocationService {
         );
         response.setData(null);
         return response;
+    }
+
+    /**
+     *
+     * @param warehouseIdList
+     * @return WarehouseIdList
+     */
+    @Override
+    public List<IWarehouseDto> findWarehouseIdListUsedInLocation(List<Integer> warehouseIdList) {
+        List<IWarehouseDto> listWarehouse = new ArrayList<>();
+        if (!CollectionUtils.isEmpty(warehouseIdList)) {
+            listWarehouse = locationRepository.findWarehouseIdListUsedInLocation(warehouseIdList);
+        }
+        return listWarehouse;
     }
 }

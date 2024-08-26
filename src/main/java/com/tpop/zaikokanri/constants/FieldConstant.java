@@ -8,6 +8,8 @@ public class FieldConstant {
     public static final String LOCATION_NAME = "locationName";
     public static final String WAREHOUSE_ID = "warehouseId";
     public static final String DIVISION_NAME = "divisionName";
+    public static final String DIVISION = "division";
+    public static final String LOCATION = "location";
     public static final String DIVISION_CD = "divisionCd";
     public static final String CATEGORY_CD = "categoryCd";
     public static final String CUSTOMER_CD = "customerCd";

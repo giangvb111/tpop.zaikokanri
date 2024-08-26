@@ -3,7 +3,9 @@ package com.tpop.zaikokanri.master.repository;
 import com.tpop.zaikokanri.constants.DivisionQueryConstant;
 import com.tpop.zaikokanri.exceptions.CommonException;
 import com.tpop.zaikokanri.master.dto.IDivisionDto;
+import com.tpop.zaikokanri.master.dto.IWarehouseDto;
 import com.tpop.zaikokanri.master.entities.Division;
+import com.tpop.zaikokanri.master.entities.Warehouse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -27,4 +29,6 @@ public interface DivisionRepository extends JpaRepository<Division, Integer> {
 
     Optional<Division> findDivisionByDivisionCd(String divisionCode);
 
+    @Query(nativeQuery = true , value = DivisionQueryConstant.SEARCH_WAREHOUSE_ID_EXISTS_IN_DIVISION)
+    List<IWarehouseDto> findWarehouseListUsedInDivision(List<Integer> warehouseIdList);
 }
