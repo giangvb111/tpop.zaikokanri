@@ -28,54 +28,6 @@ public class ScreenDisplayDetailSettingServiceImpl implements ScreenDisplayDetai
 
     private final MessageSource messageSource;
 
-//    /**
-//     *
-//     * @param lang
-//     * @return
-//     * @throws CommonException
-//     */
-//    @Override
-//    public ApiResponse<Object> getParentScreenDisplaySetting(String lang) throws CommonException {
-//        ApiResponse<Object> response = new ApiResponse<>();
-//        Locale locale = Locale.forLanguageTag(lang);
-//        List<IScreenDisplaySettingDto> screenDisplaySettingDtos = getScreenDisplaySetting(lang);
-//        if (!CollectionUtils.isEmpty(screenDisplaySettingDtos)) {
-//            response.setMessage(null);
-//        } else {
-//            response.setMessage(messageSource.getMessage(MessageCode.DATA_NOT_FOUND , null , locale));
-//        }
-//        response.setStatus(ResponseStatusConst.SUCCESS);
-//        response.setData(screenDisplaySettingDtos);
-//        return response;
-//    }
-
-
-
-//    /**
-//     *
-//     * @param lang
-//     * @return
-//     * @throws CommonException
-//     */
-//    @Override
-//    public ApiResponse<Object> getChildrenScreenDisplaySetting(String lang) throws CommonException {
-//        ApiResponse<Object> response = new ApiResponse<>();
-//        Locale locale = Locale.forLanguageTag(lang);
-//        List<IScreenDisplaySettingDto> list = getScreenDisplaySetting(lang);
-//        List<Integer> parentIdList = new ArrayList<>(list.stream()
-//                .map(IScreenDisplaySettingDto::getFunctionId)
-//                .toList());
-//        List<IScreenDisplaySettingDto> childrenScreenList = screenDisplaySettingRepository.getChildrenScreenDisplaySetting(parentIdList);
-//        if (!CollectionUtils.isEmpty(childrenScreenList)) {
-//            response.setMessage(null);
-//        } else {
-//            response.setMessage(messageSource.getMessage(MessageCode.DATA_NOT_FOUND , null ,locale ));
-//        }
-//        response.setStatus(ResponseStatusConst.SUCCESS);
-//        response.setData(childrenScreenList);
-//        return response;
-//    }
-
     /**
      *
      * @param functionCode
