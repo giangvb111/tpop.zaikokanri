@@ -108,6 +108,7 @@ public class CategoryServiceImpl implements CategoryService {
                 AtomicInteger i = new AtomicInteger();
                 //check category List
                 categoryList.forEach(c -> {
+                    // blank case
                     if (c.getCategoryCd().isBlank()) {
                         APIErrorDetail apiErrorDetail = new APIErrorDetail(
                                 i.intValue(),
@@ -121,7 +122,7 @@ public class CategoryServiceImpl implements CategoryService {
                         );
                         errorDetails.add(apiErrorDetail);
                     }
-
+                    //case already exists in database
                     if (Objects.isNull(c.getId()) && Boolean.TRUE.equals(getCategoryByCategoryCode(c.getCategoryCd()))) {
                         APIErrorDetail apiErrorDetail = new APIErrorDetail(
                                 i.intValue(),
@@ -198,6 +199,7 @@ public class CategoryServiceImpl implements CategoryService {
         ApiResponse<Object> response = new ApiResponse<>();
         Locale locale = Locale.forLanguageTag(lang);
         if (!CollectionUtils.isEmpty(categoryIdList)) {
+            // Delete Category List
             categoryRepository.deleteAllById(categoryIdList);
         }
         response.setStatus(ResponseStatusConst.SUCCESS);

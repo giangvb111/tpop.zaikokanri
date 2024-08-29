@@ -39,7 +39,7 @@ public class CustomerServiceImpl implements CustomerService {
      * @param page
      * @param limit
      * @param lang
-     * @return
+     * @return Customer Page
      * @throws CommonException
      */
     @Override
@@ -49,12 +49,14 @@ public class CustomerServiceImpl implements CustomerService {
         Pageable pageable = PageRequest.of(page, limit);
         Page<ICustomerDto> customerPage = customerRepository.getCustomerPage(customerDto ,pageable);
         if (customerPage.getTotalElements() == 0) {
+            /* case of no data */
             response.setMessage(
                     messageSource.getMessage(
                             MessageCode.DATA_NOT_FOUND, null, locale
                     )
             );
         } else {
+            /* case of data */
             response.setMessage(null);
         }
         response.setStatus(ResponseStatusConst.SUCCESS);
@@ -66,7 +68,7 @@ public class CustomerServiceImpl implements CustomerService {
      *
      * @param customerId
      * @param lang
-     * @return
+     * @return Customer
      */
     @Override
     public ApiResponse<Object> getCustomerById(Integer customerId, String lang) {
@@ -88,9 +90,10 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     /**
+     * Create Customer
      * @param customerList
      * @param lang
-     * @return
+     * @return Created Customer List
      * @throws CommonException
      */
     @Override
@@ -103,8 +106,10 @@ public class CustomerServiceImpl implements CustomerService {
             if (!CollectionUtils.isEmpty(customerList)) {
                 List<APIErrorDetail> errorDetails = new ArrayList<>();
                 AtomicInteger i = new AtomicInteger();
+                /* check Customer List */
                 customerList.forEach(c -> {
                     if (c.getCustomerCd().isBlank()) {
+                        /* Case Customer Code Blank  */
                         APIErrorDetail apiErrorDetail = new APIErrorDetail(
                                 i.intValue(),
                                 FieldConstant.CUSTOMER_CD,
@@ -118,6 +123,7 @@ public class CustomerServiceImpl implements CustomerService {
                         errorDetails.add(apiErrorDetail);
                     }
 
+                    /* Case Customer Code Already Exists In Database  */
                     if (Objects.isNull(c.getId()) && Boolean.TRUE.equals(getCustomerByCustomerCode(c.getCustomerCd()))) {
                         APIErrorDetail apiErrorDetail = new APIErrorDetail(
                                 i.intValue(),
@@ -131,6 +137,7 @@ public class CustomerServiceImpl implements CustomerService {
                     }
                 });
 
+                /* If errorDetails is not empty, an exception will be thrown.  */
                 if (!CollectionUtils.isEmpty(errorDetails)) {
                     throw new CommonException()
                             .setErrorCode(MessageCode.BAD_REQUEST)
@@ -138,6 +145,7 @@ public class CustomerServiceImpl implements CustomerService {
                             .setErrorDetails(errorDetails);
                 }
 
+                /* add each element to the list and then execute save all  */
                 List<Customer> list = new ArrayList<>();
                 for (Customer c : customerList) {
                     Customer category = Customer.builder()
@@ -186,17 +194,18 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     /**
+     * Get Customer by Customer Code
      * @param customerCode
-     * @return
+     * @return If Customer exists return True
      */
     @Override
     public Boolean getCustomerByCustomerCode(String customerCode) {
-        Optional<Customer> warehouse = customerRepository.findCustomerByCustomerCd(customerCode);
-        return warehouse.isPresent();
+        Optional<Customer> customer = customerRepository.findCustomerByCustomerCd(customerCode);
+        return customer.isPresent();
     }
 
     /**
-     *
+     * Delete Customer By Customer Id List
      * @param customerIdList
      * @param lang
      * @return
@@ -207,6 +216,7 @@ public class CustomerServiceImpl implements CustomerService {
         ApiResponse<Object> response = new ApiResponse<>();
         Locale locale = Locale.forLanguageTag(lang);
         if (!CollectionUtils.isEmpty(customerIdList)) {
+            /* If customerIdList not Empty => Delete all  */
             customerRepository.deleteAllById(customerIdList);
         }
         response.setStatus(ResponseStatusConst.SUCCESS);
