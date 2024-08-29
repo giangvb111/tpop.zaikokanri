@@ -10,7 +10,6 @@ import com.tpop.zaikokanri.master.dto.DivisionDto;
 import com.tpop.zaikokanri.master.dto.IDivisionDto;
 import com.tpop.zaikokanri.master.dto.IWarehouseDto;
 import com.tpop.zaikokanri.master.entities.Division;
-import com.tpop.zaikokanri.master.entities.Warehouse;
 import com.tpop.zaikokanri.master.entities.WarehouseDivision;
 import com.tpop.zaikokanri.master.repository.DivisionRepository;
 import com.tpop.zaikokanri.master.repository.WarehouseDivisionRepository;
@@ -44,7 +43,7 @@ public class DivisionServiceImpl implements DivisionService {
      * @param divisionName
      * @param page
      * @param limit
-     * @return
+     * @return Customer Page
      * @throws CommonException
      */
     @Override
@@ -54,12 +53,14 @@ public class DivisionServiceImpl implements DivisionService {
         Locale locale = Locale.forLanguageTag(lang);
         Page<IDivisionDto> divisionPage = divisionRepository.getDivisionPage(divisionCd, divisionName, warehouseName, pageable);
         if (divisionPage.getTotalElements() == 0) {
+            /* case of no data */
             response.setMessage(
                     messageSource.getMessage(
                             MessageCode.DATA_NOT_FOUND, null, locale
                     )
             );
         } else {
+            /* case of data */
             response.setMessage(null);
         }
         response.setStatus(ResponseStatusConst.SUCCESS);
@@ -70,7 +71,7 @@ public class DivisionServiceImpl implements DivisionService {
     /**
      * @param divisionId
      * @param lang
-     * @return
+     * @return Division By Division ID
      */
     @Override
     public ApiResponse<Object> getDivisionById(Integer divisionId, String lang) throws CommonException {
@@ -80,6 +81,7 @@ public class DivisionServiceImpl implements DivisionService {
                 Locale locale = Locale.forLanguageTag(lang);
                 List<IDivisionDto> division = divisionRepository.getDivisionByDivisionId(divisionId);
                 if (CollectionUtils.isEmpty(division)) {
+                    /* case of no data */
                     result.setMessage(messageSource.getMessage(
                             MessageCode.DATA_NOT_FOUND, null, locale
                     ));
@@ -101,6 +103,11 @@ public class DivisionServiceImpl implements DivisionService {
     }
 
 
+    /**
+     * Search Division By Division Code
+     * @param divisionCode
+     * @return If Customer exists return True
+     */
     @Override
     public Boolean getDivisionByDivisionCode(String divisionCode) {
         Optional<Division> division = divisionRepository.findDivisionByDivisionCd(divisionCode);
@@ -108,9 +115,10 @@ public class DivisionServiceImpl implements DivisionService {
     }
 
     /**
+     * Create Division
      * @param divisionDtoList
      * @param lang
-     * @return
+     * @return Created Customer List
      * @throws CommonException
      */
     @Override
@@ -124,8 +132,9 @@ public class DivisionServiceImpl implements DivisionService {
             if (!CollectionUtils.isEmpty(divisionDtoList)) {
                 List<APIErrorDetail> errorDetails = new ArrayList<>();
                 AtomicInteger i = new AtomicInteger();
+                /* check Division List */
                 divisionDtoList.forEach(d -> {
-
+                    /* Case Division Code Blank  */
                     if (d.getDivisionCd().isBlank()) {
                         APIErrorDetail apiErrorDetail = new APIErrorDetail(
                                 i.intValue(),
@@ -140,6 +149,7 @@ public class DivisionServiceImpl implements DivisionService {
                         errorDetails.add(apiErrorDetail);
                     }
 
+                    /* check length of division code */
                     if (d.getDivisionCd().length() > 10) {
                         APIErrorDetail apiErrorDetail = new APIErrorDetail(
                                 i.intValue(),
@@ -151,6 +161,8 @@ public class DivisionServiceImpl implements DivisionService {
                         );
                         errorDetails.add(apiErrorDetail);
                     }
+
+                    /* Case Division Code Already Exists In Database  */
                     if (Objects.isNull(d.getId()) && Boolean.TRUE.equals(getDivisionByDivisionCode(d.getDivisionCd()))) {
                         APIErrorDetail apiErrorDetail = new APIErrorDetail(
                                 i.intValue(),
@@ -163,6 +175,7 @@ public class DivisionServiceImpl implements DivisionService {
                         errorDetails.add(apiErrorDetail);
                     }
 
+                    /* Case Division Name Blank  */
                     if (d.getDivisionName().isBlank()) {
                         APIErrorDetail apiErrorDetail = new APIErrorDetail(
                                 i.intValue(),
@@ -178,6 +191,7 @@ public class DivisionServiceImpl implements DivisionService {
                     }
                 });
 
+                /* If errorDetails is not empty, an exception will be thrown.  */
                 if (!CollectionUtils.isEmpty(errorDetails)) {
                     throw new CommonException()
                             .setErrorCode(MessageCode.BAD_REQUEST)
@@ -185,6 +199,7 @@ public class DivisionServiceImpl implements DivisionService {
                             .setErrorDetails(errorDetails);
                 }
 
+                /* add each element to the list and then execute save all Division  */
                 List<Division> list = new ArrayList<>();
                 for (DivisionDto d : divisionDtoList) {
                     Division division = Division.builder()
@@ -200,6 +215,7 @@ public class DivisionServiceImpl implements DivisionService {
                 }
                 createdDiv = divisionRepository.saveAllAndFlush(list);
 
+                /* add each element to the list and then execute save all WarehouseDivision  */
                 List<WarehouseDivision> warehouseDivisionList = new ArrayList<>();
                 for (int j = 0; j < divisionDtoList.size(); j++) {
                     DivisionDto divisionDto = divisionDtoList.get(j);
@@ -243,7 +259,7 @@ public class DivisionServiceImpl implements DivisionService {
     }
 
     /**
-     *
+     * Delete Division By Division Id List
      * @param divisionIdList
      * @param lang
      * @return
@@ -255,7 +271,9 @@ public class DivisionServiceImpl implements DivisionService {
         ApiResponse<Object> response = new ApiResponse<>();
         Locale locale = Locale.forLanguageTag(lang);
         if (!CollectionUtils.isEmpty(divisionIdList)) {
+            /* Delete all WarehouseDivision */
             warehouseDivisionRepository.deleteAllByDivisionIdList(divisionIdList);
+            /* Delete all Division */
             divisionRepository.deleteAllById(divisionIdList);
         }
         response.setStatus(ResponseStatusConst.SUCCESS);
@@ -267,7 +285,7 @@ public class DivisionServiceImpl implements DivisionService {
     }
 
     /**
-     *
+     * Search for Warehouse in use in Division
      * @param warehouseIdList
      * @return
      */

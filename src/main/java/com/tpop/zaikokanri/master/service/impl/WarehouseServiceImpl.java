@@ -37,8 +37,9 @@ public class WarehouseServiceImpl implements WarehouseService {
     private final MessageSource messageSource;
 
     /**
+     * Get Warehouse by Warehouse Code
      * @param warehouseCode
-     * @return
+     * @return True if value exists
      */
     @Override
     public Boolean getWarehouseByWarehouseCode(String warehouseCode) {
@@ -47,10 +48,9 @@ public class WarehouseServiceImpl implements WarehouseService {
     }
 
     /**
-<<<<<<< Updated upstream
-     *
+     * Get Warehouse by Warehouse Name
      * @param warehouseName
-     * @return
+     * @return True if value exists
      */
     @Override
     public Boolean getWarehouseByWarehouseName(String warehouseName) {
@@ -59,12 +59,10 @@ public class WarehouseServiceImpl implements WarehouseService {
     }
 
     /**
-     *
-=======
->>>>>>> Stashed changes
+     * Create Warehouse
      * @param warehouseList
      * @param lang
-     * @return
+     * @return Created Warehouse List
      * @throws CommonException
      */
     @Override
@@ -77,8 +75,10 @@ public class WarehouseServiceImpl implements WarehouseService {
             if (!CollectionUtils.isEmpty(warehouseList)) {
                 List<APIErrorDetail> errorDetails = new ArrayList<>();
                 AtomicInteger i = new AtomicInteger();
+                /* check Warehouse List */
                 warehouseList.forEach(w -> {
                     if (w.getWarehouseCd().isBlank()) {
+                        /* Case Warehouse Code Blank  */
                         APIErrorDetail apiErrorDetail = new APIErrorDetail(
                                 i.intValue(),
                                 FieldConstant.WAREHOUSE_CODE,
@@ -92,6 +92,7 @@ public class WarehouseServiceImpl implements WarehouseService {
                         errorDetails.add(apiErrorDetail);
                     }
 
+                    /* Case Warehouse Name Blank  */
                     if (w.getWarehouseName().isBlank()) {
                         APIErrorDetail apiErrorDetail = new APIErrorDetail(
                                 i.intValue(),
@@ -106,6 +107,7 @@ public class WarehouseServiceImpl implements WarehouseService {
                         errorDetails.add(apiErrorDetail);
                     }
 
+                    /* Case Customer Code Already Exists In Database  */
                     if (Objects.isNull(w.getId()) && Boolean.TRUE.equals(getWarehouseByWarehouseCode(w.getWarehouseCd()))) {
                         APIErrorDetail apiErrorDetail = new APIErrorDetail(
                                 i.intValue(),
@@ -118,6 +120,7 @@ public class WarehouseServiceImpl implements WarehouseService {
                         errorDetails.add(apiErrorDetail);
                     }
 
+                    /* Case Customer Name Already Exists In Database  */
                     if (Objects.isNull(w.getId()) && Boolean.TRUE.equals(getWarehouseByWarehouseName(w.getWarehouseName()))) {
                         APIErrorDetail apiErrorDetail = new APIErrorDetail(
                                 i.intValue(),
@@ -162,6 +165,7 @@ public class WarehouseServiceImpl implements WarehouseService {
                     }
                 });
 
+                /* add each element to the list and then execute save all  */
                 if (!CollectionUtils.isEmpty(errorDetails)) {
                     throw new CommonException()
                             .setErrorCode(MessageCode.BAD_REQUEST)
@@ -169,6 +173,7 @@ public class WarehouseServiceImpl implements WarehouseService {
                             .setErrorDetails(errorDetails);
                 }
 
+                /* add each element to the list and then execute save all  */
                 List<Warehouse> list = new ArrayList<>();
                 for (Warehouse w : warehouseList) {
                     Warehouse warehouse = Warehouse.builder()
@@ -199,7 +204,7 @@ public class WarehouseServiceImpl implements WarehouseService {
     }
 
     /**
-     * @return
+     * @return Warehouse List
      */
     @Override
     public ApiResponse<Object> getWarehouseList() {
@@ -214,9 +219,10 @@ public class WarehouseServiceImpl implements WarehouseService {
 
 
     /**
+     *
      * @param warehouseId
      * @param lang
-     * @return
+     * @return Warehouse
      */
     @Override
     public ApiResponse<Object> getWarehouseById(Integer warehouseId, String lang) {
@@ -242,7 +248,7 @@ public class WarehouseServiceImpl implements WarehouseService {
      * @param warehouseName
      * @param page
      * @param limit
-     * @return
+     * @return Warehouse Page
      * @throws CommonException
      */
     @Override
@@ -252,12 +258,14 @@ public class WarehouseServiceImpl implements WarehouseService {
         Pageable pageable = PageRequest.of(page, limit);
         Page<Warehouse> warehousePage = warehouseRepository.findByWarehouseCdContainingAndWarehouseNameContaining(warehouseCd, warehouseName, pageable);
         if (warehousePage.getTotalElements() == 0) {
+            /* case of no data */
             response.setMessage(
                     messageSource.getMessage(
                             MessageCode.DATA_NOT_FOUND, null, locale
                     )
             );
         } else {
+            /* case of data */
             response.setMessage(null);
         }
         response.setStatus(ResponseStatusConst.SUCCESS);
@@ -266,6 +274,7 @@ public class WarehouseServiceImpl implements WarehouseService {
     }
 
     /**
+     * Delete Warehouse By Warehouse Id List
      * @param warehouseIdList
      * @param lang
      * @return
@@ -278,7 +287,7 @@ public class WarehouseServiceImpl implements WarehouseService {
         try {
             Locale locale = Locale.forLanguageTag(lang);
             if (!CollectionUtils.isEmpty(warehouseIdList)) {
-                // check Warehouse used in Location
+                /* check Warehouse used in Location */
                 List<IWarehouseDto> warehouseList = locationService.findWarehouseIdListUsedInLocation(warehouseIdList);
                 List<APIErrorDetail> errorDetails = new ArrayList<>();
                 AtomicInteger i = new AtomicInteger();
@@ -297,7 +306,7 @@ public class WarehouseServiceImpl implements WarehouseService {
                     });
                 }
 
-                // check Warehouse used in Division
+                /* check Warehouse used in Division */
                 List<IWarehouseDto> warehouseDivisionList = divisionService.findWarehouseIdListUsedInDivision(warehouseIdList);
                 if (!CollectionUtils.isEmpty(warehouseDivisionList)) {
                     warehouseDivisionList.forEach(s -> {
@@ -314,6 +323,7 @@ public class WarehouseServiceImpl implements WarehouseService {
                     });
                 }
 
+                /* If errorDetails is not empty, an exception will be thrown.  */
                 if (!CollectionUtils.isEmpty(errorDetails)) {
                     throw new CommonException()
                             .setErrorCode(MessageCode.BAD_REQUEST)
@@ -321,6 +331,7 @@ public class WarehouseServiceImpl implements WarehouseService {
                             .setErrorDetails(errorDetails);
                 }
 
+                /* If errorDetails is empty, Delete All By Warehouse id List.  */
                 warehouseRepository.deleteAllById(warehouseIdList);
                 response.setStatus(ResponseStatusConst.SUCCESS);
                 response.setMessage(
