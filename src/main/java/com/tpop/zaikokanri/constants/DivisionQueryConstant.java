@@ -38,12 +38,12 @@ public class DivisionQueryConstant {
                     "    STRING_AGG(w.WAREHOUSE_CD, ', ') as warehouseCd,\n" +
                     "    STRING_AGG(w.WAREHOUSE_NAME, ', ') as warehouseName\n" +
                     "from M_部門 d\n" +
-                    "join M_部門_倉庫 dw on d.DIVISION_ID = dw.DIVISION_ID\n" +
-                    "join M_倉庫 w on dw.WAREHOUSE_ID = w.WAREHOUSE_ID\n" +
+                    "left join M_部門_倉庫 dw on d.DIVISION_ID = dw.DIVISION_ID\n" +
+                    "left join M_倉庫 w on dw.WAREHOUSE_ID = w.WAREHOUSE_ID\n" +
                     "where \n" +
-                    "   (:divisionCd IS NULL OR d.DIVISION_CD like CONCAT('%', :divisionCd, '%'))\n" +
-                    "   and (:divisionName IS NULL OR d.DIVISION_NAME like CONCAT('%', :divisionName, '%'))\n" +
-                    "   and (:warehouseName IS NULL OR EXISTS (\n" +
+                    "   (:divisionCd IS NULL OR d.DIVISION_CD IS NULL OR d.DIVISION_CD like CONCAT('%', :divisionCd, '%'))\n" +
+                    "   and (:divisionName IS NULL OR d.DIVISION_NAME IS NULL OR d.DIVISION_NAME like CONCAT('%', :divisionName, '%'))\n" +
+                    "   and (:warehouseName IS NULL OR w.WAREHOUSE_NAME IS NULL OR EXISTS (\n" +
                     "           select 1 \n" +
                     "           from M_倉庫 w2 \n" +
                     "           join M_部門_倉庫 dw2 on dw2.WAREHOUSE_ID = w2.WAREHOUSE_ID \n" +

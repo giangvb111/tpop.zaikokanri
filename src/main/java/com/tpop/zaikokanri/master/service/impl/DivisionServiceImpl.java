@@ -129,6 +129,7 @@ public class DivisionServiceImpl implements DivisionService {
         try {
             LocalDateTime currentTime = LocalDateTime.now();
             Locale locale = Locale.forLanguageTag(lang);
+            boolean checkWarehouse = false;
             if (!CollectionUtils.isEmpty(divisionDtoList)) {
                 List<APIErrorDetail> errorDetails = new ArrayList<>();
                 AtomicInteger i = new AtomicInteger();
@@ -215,32 +216,41 @@ public class DivisionServiceImpl implements DivisionService {
                 }
                 createdDiv = divisionRepository.saveAllAndFlush(list);
 
-                /* add each element to the list and then execute save all WarehouseDivision  */
-                List<WarehouseDivision> warehouseDivisionList = new ArrayList<>();
-                for (int j = 0; j < divisionDtoList.size(); j++) {
-                    DivisionDto divisionDto = divisionDtoList.get(j);
-                    Integer divisionId = createdDiv.get(j).getId();
-                    if (!CollectionUtils.isEmpty(divisionDto.getDivisionWarehouseList())) {
-                        List<Integer> warehouseDivisionIdList = warehouseDivisionRepository.getWarehouseDivisionIdListByDivisionId(divisionId);
-                        for (WarehouseDivision wd : divisionDto.getDivisionWarehouseList()) {
-                            if (!Objects.isNull(wd.getDiviWarehouseId())) {
-                                warehouseDivisionIdList.remove(wd.getDiviWarehouseId());
-                            }
-                            WarehouseDivision warehouseDivision = WarehouseDivision.builder()
-                                    .diviWarehouseId(wd.getDiviWarehouseId())
-                                    .divisionId(divisionId)
-                                    .warehouseId(wd.getWarehouseId())
-                                    .createdAt(currentTime)
-                                    .createdBy("user")
-                                    .updatedAt(currentTime)
-                                    .updatedBy("user")
-                                    .build();
-                            warehouseDivisionList.add(warehouseDivision);
-                        }
-                        warehouseDivisionRepository.deleteAllByIdInBatch(warehouseDivisionIdList);
+                for (DivisionDto d : divisionDtoList) {
+                    if (Objects.isNull(d.getDivisionWarehouseList().get(0).getWarehouseId())) {
+                        checkWarehouse = true;
+                        break;
                     }
                 }
-                warehouseDivisionRepository.saveAllAndFlush(warehouseDivisionList);
+
+                /* add each element to the list and then execute save all WarehouseDivision  */
+                if (!checkWarehouse) {
+                    List<WarehouseDivision> warehouseDivisionList = new ArrayList<>();
+                    for (int j = 0; j < divisionDtoList.size(); j++) {
+                        DivisionDto divisionDto = divisionDtoList.get(j);
+                        Integer divisionId = createdDiv.get(j).getId();
+                        if (!CollectionUtils.isEmpty(divisionDto.getDivisionWarehouseList())) {
+                            List<Integer> warehouseDivisionIdList = warehouseDivisionRepository.getWarehouseDivisionIdListByDivisionId(divisionId);
+                            for (WarehouseDivision wd : divisionDto.getDivisionWarehouseList()) {
+                                if (!Objects.isNull(wd.getDiviWarehouseId())) {
+                                    warehouseDivisionIdList.remove(wd.getDiviWarehouseId());
+                                }
+                                WarehouseDivision warehouseDivision = WarehouseDivision.builder()
+                                        .diviWarehouseId(wd.getDiviWarehouseId())
+                                        .divisionId(divisionId)
+                                        .warehouseId(wd.getWarehouseId())
+                                        .createdAt(currentTime)
+                                        .createdBy("user")
+                                        .updatedAt(currentTime)
+                                        .updatedBy("user")
+                                        .build();
+                                warehouseDivisionList.add(warehouseDivision);
+                            }
+                            warehouseDivisionRepository.deleteAllByIdInBatch(warehouseDivisionIdList);
+                        }
+                    }
+                    warehouseDivisionRepository.saveAllAndFlush(warehouseDivisionList);
+                }
             }
 
             createdDivision = divisionRepository.getDivisionByDivisionIdList(
